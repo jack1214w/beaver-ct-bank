@@ -1,0 +1,1386 @@
+<title>河狸運算思維挑戰</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style id="app-css">
+/* Layout: 單欄題目卷。開始畫面選題組；作答時頂端是河狸水壩進度條，每題是「橘色粗邊標題框」＋題目卡 */
+:root{
+  --bg:#fbf6ef; --paper:#ffffff; --ink:#3a2a1f; --soft:#7b6555; --line:#ead9c6;
+  --accent:#e0763a; --accent-ink:#b8531c; --accent-tint:#fde8d8;
+  --pond:#2f8aa3; --pond-tint:#dff1f5;
+  --wood:#a8663a; --wood-tint:#f3e0cc;
+  --sun:#e9a520; --good:#3d8b4f; --good-tint:#e2f3e3; --bad:#cf5536; --bad-tint:#fde4db;
+  --red:#d9534f; --yellow:#f2b33d; --blue:#3b7dd8; --green:#3f9a55;
+  --px-on:#2b2118; --px-off:#ffffff;
+  --f-display:"Huninn","Noto Sans TC",system-ui,sans-serif;
+  --f-body:"Noto Sans TC",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1c1814; --paper:#27211b; --ink:#f4e9dc; --soft:#c5b09c; --line:#45382c;
+    --accent:#f08d55; --accent-ink:#f6a877; --accent-tint:#4a2d1d;
+    --pond:#6cc3d8; --pond-tint:#1d3940; --wood:#d39a68; --wood-tint:#3c2c1e;
+    --sun:#f5c451; --good:#7cc98b; --good-tint:#1e3a26; --bad:#f08a6b; --bad-tint:#47271d;
+    --red:#ec7470; --yellow:#f5c451; --blue:#6aa3ef; --green:#6cc184;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1c1814; --paper:#27211b; --ink:#f4e9dc; --soft:#c5b09c; --line:#45382c;
+  --accent:#f08d55; --accent-ink:#f6a877; --accent-tint:#4a2d1d;
+  --pond:#6cc3d8; --pond-tint:#1d3940; --wood:#d39a68; --wood-tint:#3c2c1e;
+  --sun:#f5c451; --good:#7cc98b; --good-tint:#1e3a26; --bad:#f08a6b; --bad-tint:#47271d;
+  --red:#ec7470; --yellow:#f5c451; --blue:#6aa3ef; --green:#6cc184;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 96px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.75}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+h1,h2,h3,.disp{font-family:var(--f-display);font-weight:400;text-wrap:balance}
+svg{max-width:100%}
+.wrap{max-width:840px;margin:0 auto;padding-block:0 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* 水壩進度條 */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:2px solid var(--line)}
+.bar-in{max-width:840px;margin:0 auto;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap}
+.set-tag{font-family:var(--f-display);color:var(--accent-ink);white-space:nowrap}
+.dam{display:flex;gap:4px;flex:1;min-width:200px}
+.log{flex:1;height:22px;border-radius:11px;border:2px dashed var(--line);transition:background .35s,border-color .35s}
+.log.full{background:var(--wood);border:2px solid var(--wood)}
+.log.half{background:repeating-linear-gradient(45deg,var(--wood) 0 6px,transparent 6px 12px);border:2px solid var(--wood)}
+.log.miss{border:2px solid var(--bad);background:var(--bad-tint)}
+.score{white-space:nowrap}
+.score-num{font-family:var(--f-display);font-size:30px;color:var(--accent-ink);vertical-align:-3px}
+
+/* 開始畫面 */
+.hero{display:flex;align-items:center;gap:8px 24px;padding:36px 0 8px;flex-wrap:wrap}
+.hero svg{width:130px;height:130px;flex:none}
+.hero-text{flex:1;min-width:240px}
+.hero h1{font-size:clamp(34px,7vw,50px);line-height:1.2;margin:0 0 6px;color:var(--accent-ink)}
+.hero p{margin:0;color:var(--soft);max-width:60ch}
+.section-h{font-size:24px;margin:30px 0 12px}
+.sets{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.set-card{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:4px;background:var(--paper);border:2px solid var(--line);border-left:10px solid var(--accent);border-radius:6px 14px 14px 6px;padding:14px 16px;transition:transform .15s,border-color .15s}
+.set-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+.set-card:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+.set-card .stars{font-size:18px}
+.set-card b{font-family:var(--f-display);font-weight:400;font-size:24px;color:var(--ink)}
+.set-card span.d{font-size:14px;color:var(--soft);line-height:1.5}
+.set-card.rand{border-left-color:var(--pond)}
+.set-card.class-card{border-left-color:var(--good);background:var(--good-tint)}
+.set-card.class-card b{font-size:28px}
+.pub{border:2px dashed var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.pub .now{margin:0;font-weight:500}
+.cats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px;margin:0;padding:0;list-style:none}
+.cats li{display:flex;align-items:baseline;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.cats .k{font-family:var(--f-display);font-size:20px;color:var(--accent-ink);width:1.2em}
+.cats .r{margin-left:auto;font-size:13px;color:var(--soft);font-variant-numeric:tabular-nums}
+
+/* 作答畫面 */
+.quiz-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding-top:26px}
+.quiz-head h1{margin:0;font-size:30px;color:var(--accent-ink)}
+.rules{background:var(--paper);border:2px dashed var(--line);padding:10px 16px;border-radius:12px;margin:14px 0 0;font-size:15px;color:var(--soft)}
+.q{background:var(--paper);border-radius:16px;border:2px solid var(--line);padding:18px 20px 18px;margin:24px 0}
+.q.correct{border-color:var(--good)}
+.q.revealed{border-color:var(--bad)}
+.q-title{display:flex;align-items:center;gap:10px 12px;border:2px solid var(--accent);border-left:12px solid var(--accent);padding:8px 14px;margin:0 0 6px;flex-wrap:wrap}
+.q-title h2{margin:0;font-size:24px;line-height:1.3;flex:1;min-width:10em}
+.code{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-weight:700;font-size:15px;background:var(--accent-ink);color:var(--paper);border-radius:8px;padding:1px 8px;white-space:nowrap}
+.stars{color:var(--sun);letter-spacing:2px;white-space:nowrap}
+.q-meta{font-size:14px;color:var(--soft);margin:0 0 6px}
+.q p{margin:8px 0}
+.ask{font-weight:700}
+.fig{display:block;margin:12px auto;width:100%;height:auto}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;margin:8px 0;font-size:15px}
+td,th{border:1px solid var(--line);padding:4px 10px;text-align:center}
+th{background:var(--accent-tint);font-weight:500}
+.steps{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}
+.steps span{border:2px solid var(--line);border-radius:10px;padding:1px 10px;background:var(--paper);white-space:nowrap}
+.steps span.hl{border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.steps i{font-style:normal;color:var(--soft)}
+.blocks{display:inline-flex;flex-direction:column;gap:6px;font-weight:700;margin:6px 0}
+.blk{background:var(--pond-tint);border:2px solid var(--pond);border-radius:8px;padding:3px 12px}
+.blk.loop{background:var(--accent-tint);border-color:var(--accent)}
+.blk .inner{display:flex;flex-direction:column;gap:6px;margin:6px 0 2px 18px;font-weight:700}
+.rulebox{background:var(--pond-tint);border-radius:12px;padding:10px 16px;margin:8px 0}
+.rulebox ol{margin:0;padding-left:1.4em}
+.codebook{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0}
+.codebook div{border:2px solid var(--line);border-radius:12px;padding:4px 14px;background:var(--paper);font-size:20px}
+.codebook b{font-family:var(--f-display);font-weight:400}
+.abc{font-family:ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:.35em;overflow-x:auto;white-space:nowrap;background:var(--pond-tint);border-radius:10px;padding:6px 12px}
+
+.answer{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;margin:14px 0 4px;padding:14px;background:var(--accent-tint);border-radius:12px}
+.answer label{display:inline-flex;align-items:center;gap:6px;cursor:pointer;flex-wrap:wrap}
+.opts{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;flex-basis:100%}
+.flabel{font-weight:500}
+input[type=text],input[type=number],select,textarea{font:inherit;font-size:17px;padding:5px 10px;border:2px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);min-width:0}
+input[type=number]{width:96px}
+input[type=text]{width:220px;max-width:100%}
+input[type=radio],input[type=checkbox]{width:20px;height:20px;accent-color:var(--accent-ink)}
+.chip{border:2px solid var(--line);border-radius:999px;padding:3px 14px;background:var(--paper)}
+.chip:has(input:checked){border-color:var(--accent-ink);box-shadow:inset 0 0 0 1px var(--accent-ink)}
+button{font:inherit;cursor:pointer;border-radius:10px;border:2px solid var(--accent-ink);padding:6px 18px;background:var(--accent-ink);color:var(--paper);font-weight:700}
+button.ghost{background:transparent;color:var(--accent-ink)}
+button:disabled{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.fb{margin-top:12px;padding:8px 14px;border-radius:12px;display:none;align-items:center;gap:12px}
+.fb.show{display:flex}
+.fb svg{width:52px;height:52px;flex:none}
+.fb.ok{background:var(--good-tint);border-left:5px solid var(--good)}
+.fb.no{background:var(--bad-tint);border-left:5px solid var(--bad)}
+.explain{display:none;margin-top:10px;padding:12px 16px;border:2px dashed var(--line);border-radius:12px;font-size:16px}
+.explain.show{display:block}
+.explain b{color:var(--accent-ink)}
+
+/* 可點的格子（黑白固定，不跟深色模式反轉） */
+.paint{display:grid;grid-template-columns:repeat(7,36px);gap:3px;margin:8px 0}
+.paint button{width:36px;height:36px;padding:0;border-radius:4px;border:2px solid var(--soft);background:var(--px-off)}
+.paint button.on{background:var(--px-on);border-color:var(--px-on)}
+.paint-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.cards{display:grid;grid-template-columns:auto repeat(5,48px);gap:6px;align-items:center;margin:4px 0}
+.cards .lbl{font-size:13px;color:var(--soft);text-align:center}
+.cards button.card{width:48px;height:58px;padding:0;border-radius:8px;border:2px solid var(--soft);background:var(--px-off)}
+.cards button.card.black{background:var(--px-on);border-color:var(--px-on)}
+.cards button.card.pick{outline:4px solid var(--sun);outline-offset:2px}
+.scratch td{padding:0}
+.scratch button{width:56px;height:40px;padding:0;border:0;border-radius:0;background:var(--paper);color:var(--accent-ink);font-size:20px}
+.small{font-size:14px;color:var(--soft)}
+
+.final{background:var(--paper);border:3px solid var(--wood);border-radius:18px;padding:22px;margin:30px 0;text-align:center}
+.final svg.mascot{width:110px;height:110px}
+.final h2{font-size:30px;margin:0 0 6px;color:var(--wood)}
+.result-list{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:12px 0;padding:0;list-style:none}
+.result-list li{border:2px solid var(--line);border-radius:999px;padding:0 10px;font-size:14px;font-variant-numeric:tabular-nums}
+.result-list li.r10{border-color:var(--good)}
+.result-list li.r5{border-color:var(--sun)}
+.result-list li.r0{border-color:var(--bad)}
+.final .actions{justify-content:center}
+
+.teacher-open{display:block;margin:40px auto 0;background:transparent;color:var(--soft);border:2px dashed var(--line);font-weight:500}
+dialog{border:2px solid var(--line);border-radius:16px;background:var(--paper);color:var(--ink);padding:22px;max-width:min(92vw,380px)}
+dialog::backdrop{background:rgba(30,20,12,.55)}
+dialog h2{margin:0 0 10px;font-size:24px;color:var(--accent-ink)}
+dialog input{width:100%;margin:6px 0 4px}
+.pw-err{color:var(--bad);font-size:15px;min-height:1.6em;margin:0}
+.panel{background:var(--paper);border:3px solid var(--accent);border-radius:18px;padding:20px;margin:30px 0}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.panel h2{margin:0;font-size:28px;color:var(--accent-ink)}
+.panel h3{font-size:21px;margin:22px 0 6px;color:var(--accent-ink)}
+.panel .setline{margin:4px 0;font-size:15px}
+.panel .setline code{font-family:ui-monospace,"SF Mono",Menlo,monospace}
+.custom{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.custom input{flex:1;min-width:200px}
+.panel details{border-bottom:1px solid var(--line);padding:6px 0}
+.panel summary{cursor:pointer;font-family:var(--f-display);font-size:19px}
+.panel ol{list-style:none;padding:0;margin:8px 0 0}
+.panel li{margin:0 0 12px;padding-bottom:10px;border-bottom:1px dashed var(--line)}
+.panel li:last-child{border-bottom:0}
+.panel .t{font-weight:700;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.panel .c{font-size:14px;color:var(--soft)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+@media (max-width:520px){.cats{grid-template-columns:1fr}.q{padding:14px 12px}.paint{grid-template-columns:repeat(7,32px)}.paint button{width:32px;height:32px}.cards{grid-template-columns:auto repeat(5,42px)}.cards button.card{width:42px;height:50px}}
+</style>
+
+<script type="application/json" id="class-set">null</script>
+<div id="root"></div>
+<script id="app-js">
+/* 網頁骨架。老師發布全班題組時，網頁會用 pageSource() 重新產生自己：
+   <style id="app-css">、這個 <script id="app-js"> 原樣保留，只換掉 #class-set 的資料。 */
+const SHELL = `
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="bv-base" viewBox="0 0 120 120">
+      <g stroke="#3a2a1f" stroke-width="4" stroke-linejoin="round">
+        <circle cx="28" cy="32" r="14" fill="#c8743f"/><circle cx="92" cy="32" r="14" fill="#c8743f"/>
+        <ellipse cx="60" cy="66" rx="44" ry="40" fill="#c8743f"/>
+        <ellipse cx="60" cy="82" rx="25" ry="18" fill="#f6d4ad" stroke-width="3"/>
+        <rect x="51.5" y="88" width="8.5" height="14" rx="2" fill="#fff" stroke-width="2.5"/>
+        <rect x="60" y="88" width="8.5" height="14" rx="2" fill="#fff" stroke-width="2.5"/>
+        <path d="M50 74 Q60 68 70 74 Q66 84 60 86 Q54 84 50 74Z" fill="#3a2a1f" stroke-width="2"/>
+      </g>
+      <circle cx="28" cy="32" r="6" fill="#9c5a2e"/><circle cx="92" cy="32" r="6" fill="#9c5a2e"/>
+      <path d="M34 78 L8 73 M34 85 L8 88 M86 78 L112 73 M86 85 L112 88" stroke="#3a2a1f" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="31" cy="70" r="6" fill="#f2917b" opacity=".55"/><circle cx="89" cy="70" r="6" fill="#f2917b" opacity=".55"/>
+    </symbol>
+    <symbol id="bv" viewBox="0 0 120 120">
+      <use href="#bv-base"/>
+      <circle cx="45" cy="58" r="5" fill="#3a2a1f"/><circle cx="75" cy="58" r="5" fill="#3a2a1f"/>
+      <circle cx="46.5" cy="56.5" r="1.6" fill="#fff"/><circle cx="76.5" cy="56.5" r="1.6" fill="#fff"/>
+    </symbol>
+    <symbol id="bv-happy" viewBox="0 0 120 120">
+      <use href="#bv-base"/>
+      <path d="M38 60 Q45 50 52 60 M68 60 Q75 50 82 60" stroke="#3a2a1f" stroke-width="4" fill="none" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="bv-oops" viewBox="0 0 120 120">
+      <use href="#bv-base"/>
+      <circle cx="45" cy="60" r="4.5" fill="#3a2a1f"/><circle cx="75" cy="60" r="4.5" fill="#3a2a1f"/>
+      <path d="M37 49 L51 53 M83 49 L69 53" stroke="#3a2a1f" stroke-width="3" stroke-linecap="round"/>
+      <path d="M104 40 Q111 52 104 57 Q97 52 104 40Z" fill="#8fd0ea" stroke="#3a2a1f" stroke-width="2"/>
+    </symbol>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#7b6555"/></marker>
+  </defs>
+</svg>
+
+<div class="bar" id="bar" hidden><div class="bar-in">
+  <span class="set-tag" id="setTag"></span>
+  <div class="dam" id="dam" aria-label="答題進度"></div>
+  <div class="score">得分 <span class="score-num" id="score">0</span> / 100</div>
+</div></div>
+
+<div class="wrap">
+
+<section id="home">
+  <header class="hero">
+    <svg viewBox="0 0 120 120" aria-hidden="true"><use href="#bv"/></svg>
+    <div class="hero-text">
+      <h1>河狸運算思維挑戰</h1>
+      <p>題庫共 50 題，分成 10 種解題能力。每次挑戰 10 題，每種能力各 1 題。每答對一題，河狸的水壩就多一根木頭。</p>
+    </div>
+  </header>
+
+  <div id="classSet" hidden></div>
+  <div id="otherSets">
+    <h2 class="section-h">選一個題組開始</h2>
+    <div class="sets" id="sets"></div>
+  </div>
+
+  <h2 class="section-h">題庫的 10 種能力</h2>
+  <ul class="cats" id="cats"></ul>
+  <p class="small">題號＝類別字母＋兩位數。01、02 是 ★ 簡單，03、04 是 ★★ 中等，05 是 ★★★ 挑戰。</p>
+</section>
+
+<section id="quizView" hidden>
+  <div class="quiz-head">
+    <h1 id="quizTitle">題組</h1>
+    <button class="ghost" id="backHome" type="button">換一個題組</button>
+  </div>
+  <p class="rules">第一次就答對得 10 分；答錯可以再試，之後答對得 5 分。連錯兩次可以看解答，但這題不得分。</p>
+  <main id="quiz"></main>
+  <section class="final" id="final" hidden aria-live="polite">
+    <svg class="mascot" viewBox="0 0 120 120" aria-hidden="true"><use href="#bv-happy"/></svg>
+    <h2 id="finalTitle">挑戰完成！</h2>
+    <p id="finalText"></p>
+    <ul class="result-list" id="resultList"></ul>
+    <div class="actions"><button id="again" type="button">同一組再挑戰</button><button class="ghost" id="toHome" type="button">回到選題組</button></div>
+  </section>
+</section>
+
+<section class="panel" id="panel" hidden aria-label="教師後台">
+  <div class="panel-head"><h2>教師後台</h2><button class="ghost" id="panelClose" type="button">關閉後台</button></div>
+  <p class="small">這裡的內容不會影響學生作答與計分。</p>
+  <h3>推薦題組</h3>
+  <div id="setLines"></div>
+  <p class="small">想讓全班直接進入同一組，可以在網址最後加上 <code>#easy</code>、<code>#medium</code>、<code>#hard</code> 或 <code>#random</code>。</p>
+  <h3>自訂題組</h3>
+  <div class="custom">
+    <input type="text" id="customCodes" placeholder="例如：A02 B04 C01 D02 E04" autocomplete="off" aria-label="輸入題號">
+    <button type="button" id="customGo">用這些題目開始</button>
+  </div>
+  <p class="small" id="customMsg">輸入 1～20 個題號，用空白或逗號分開。也可以把網址最後加上 <code>#A02-B04-C01</code> 這樣的題號串。</p>
+  <h3>發布給全班</h3>
+  <div class="pub">
+    <p class="now" id="classNow"></p>
+    <div class="opts" role="radiogroup" aria-label="要發布的題組">
+      <label class="chip"><input type="radio" name="pubSrc" value="easy" checked>簡單題組</label>
+      <label class="chip"><input type="radio" name="pubSrc" value="medium">中等題組</label>
+      <label class="chip"><input type="radio" name="pubSrc" value="hard">挑戰題組</label>
+      <label class="chip"><input type="radio" name="pubSrc" value="random">隨機抽一組（全班同一組）</label>
+      <label class="chip"><input type="radio" name="pubSrc" value="custom">上面「自訂題組」的題號</label>
+    </div>
+    <label class="chip" style="align-self:flex-start"><input type="checkbox" id="pubOnly">學生只能寫這一組（隱藏其他題組）</label>
+    <div class="actions" style="margin-top:0"><button type="button" id="pubGo" disabled>發布給全班</button><button type="button" class="ghost" id="pubClear" disabled>取消發布</button></div>
+    <p class="small" id="pubMsg" style="margin:0">正在確認你能不能發布……</p>
+    <div id="ghSteps" hidden>
+      <ol class="small" style="margin:0 0 8px;padding-left:1.4em"><li>按「複製」把下面的內容複製起來。</li><li>打開 <a id="ghEdit" target="_blank" rel="noopener">GitHub 上的 class-set.json</a>，全選後貼上，按「Commit changes」存檔。</li><li>等大約 1 分鐘，學生重新整理網頁就會看到。</li></ol>
+      <textarea id="ghJson" readonly rows="6" aria-label="class-set.json 的內容" style="width:100%;font-family:ui-monospace,Menlo,monospace;font-size:14px"></textarea>
+      <div class="actions" style="margin-top:6px"><button type="button" class="ghost" id="ghCopy">複製</button><span class="small" id="ghCopied"></span></div>
+    </div>
+  </div>
+  <h3>50 題答案與解題過程</h3>
+  <div id="panelList"></div>
+</section>
+
+<button class="teacher-open" id="teacherOpen" type="button">教師後台</button>
+</div>
+
+<dialog id="pwDialog">
+  <form method="dialog" id="pwForm">
+    <h2>教師後台</h2>
+    <label for="pw">請輸入密碼</label>
+    <input type="password" id="pw" inputmode="numeric" autocomplete="off">
+    <p class="pw-err" id="pwErr" role="alert"></p>
+    <div class="actions"><button type="submit">進入後台</button><button type="button" class="ghost" id="pwCancel">取消</button></div>
+  </form>
+</dialog>`;
+document.getElementById('root').innerHTML = SHELL;
+
+/* ---------- 畫圖小工具 ---------- */
+const bv = (x, y, s, k = '') => `<use href="#bv${k}" x="${x}" y="${y}" width="${s}" height="${s}"/>`;
+const svg = (w, h, inner, label, max) => `<svg class="fig" viewBox="0 0 ${w} ${h}" role="img" aria-label="${label}" style="max-width:${max || w}px">${inner}</svg>`;
+const steps = arr => `<div class="steps">${arr.map(s => s[0] === '!' ? `<span class="hl">${s.slice(1)}</span>` : `<span>${s}</span>`).join('<i>→</i>')}</div>`;
+const LOG = (cx, cy, n) => `<circle cx="${cx}" cy="${cy}" r="24" fill="#d79b62" stroke="#3a2a1f" stroke-width="3"/><circle cx="${cx}" cy="${cy}" r="15" fill="none" stroke="#a8663a" stroke-width="2"/><text x="${cx}" y="${cy + 7}" text-anchor="middle" font-size="19" font-weight="700" fill="#3a2a1f">${n}</text>`;
+
+function pix(rows, {cell = 34, label = true, quad = false} = {}) {
+  const n = rows[0].length, lw = label ? 66 : 0, w = lw + n * cell + 4, h = rows.length * cell + 4;
+  let s = '';
+  rows.forEach((r, i) => {
+    if (label) s += `<text x="${lw - 10}" y="${2 + i * cell + cell / 2 + 6}" text-anchor="end" font-size="15" fill="var(--soft)">第 ${i + 1} 列</text>`;
+    [...r].forEach((c, j) => s += `<rect x="${lw + 2 + j * cell}" y="${2 + i * cell}" width="${cell}" height="${cell}" fill="${c === '1' ? 'var(--px-on)' : 'var(--px-off)'}" stroke="var(--soft)" stroke-width="1.5"/>`);
+  });
+  if (quad) { const mx = lw + 2 + n * cell / 2, my = 2 + rows.length * cell / 2; s += `<path d="M${mx} 2V${h - 2}M${lw + 2} ${my}H${w - 2}" stroke="var(--accent)" stroke-width="4"/>`; }
+  return svg(w, h, s, '黑白像素圖片');
+}
+
+function graph(N, E, hi) {
+  let s = `<g stroke="var(--soft)" stroke-width="3">${E.map(([a, b]) => `<line x1="${N[a][0]}" y1="${N[a][1]}" x2="${N[b][0]}" y2="${N[b][1]}"/>`).join('')}</g>`;
+  s += `<g font-size="18" font-weight="700" fill="var(--wood)" text-anchor="middle">${E.filter(e => e[2] != null).map(e => `<text x="${e[3]}" y="${e[4]}">${e[2]}</text>`).join('')}</g>`;
+  s += `<g font-size="19" font-weight="700" text-anchor="middle" fill="var(--ink)">${Object.entries(N).map(([k, [x, y]]) => `<circle cx="${x}" cy="${y}" r="26" fill="${hi.includes(k) ? 'var(--accent-tint)' : 'var(--paper)'}" stroke="${hi.includes(k) ? 'var(--accent)' : 'var(--soft)'}" stroke-width="3"/><text x="${x}" y="${y + 7}">${k}</text>`).join('')}</g>`;
+  return s;
+}
+
+const robotGrid = svg(560, 280, `
+  <g stroke="var(--line)" stroke-width="1.5">
+    <path d="M40 20V260M80 20V260M120 20V260M160 20V260M200 20V260M240 20V260M280 20V260"/>
+    <path d="M40 20H280M40 60H280M40 100H280M40 140H280M40 180H280M40 220H280M40 260H280"/>
+  </g>
+  <rect x="46" y="226" width="28" height="28" rx="6" fill="var(--pond-tint)" stroke="var(--pond)" stroke-width="2"/>
+  <path d="M51 248 L60 230 L69 248Z" fill="var(--pond)"/>
+  <text x="60" y="278" font-size="14" text-anchor="middle" fill="var(--ink)">起點</text>
+  <g stroke="var(--soft)" stroke-width="2"><path d="M420 140V80M420 140H480M420 140V200M420 140H360"/></g>
+  <g font-size="17" font-weight="700" fill="var(--ink)" text-anchor="middle"><text x="420" y="70">北</text><text x="496" y="146">東</text><text x="420" y="222">南</text><text x="344" y="146">西</text></g>`, '方格地板與機器人起點，機器人面向北');
+
+/* ---------- 題庫 ---------- */
+const CATS = {A: '排隊與堆疊', B: '編碼與二進位', C: '地圖與路線', D: '圖片與壓縮', E: '邏輯推理', F: '規律與樣式', G: '最佳方案', H: '偵錯與密碼', I: '程式與指令', J: '搜尋與排序'};
+const LV = id => Number(id.slice(1)) <= 2 ? 1 : Number(id.slice(1)) <= 4 ? 2 : 3;
+const STAR = n => '★'.repeat(n) + '☆'.repeat(3 - n);
+
+const Q = [
+/* ===== A 排隊與堆疊 ===== */
+{id: 'A01', title: '河狸餐廳的盤子', concept: '堆疊（後放的先拿）',
+ body: `<p>河狸餐廳把盤子一個一個往上疊，每次只能從<b>最上面</b>拿走或放上盤子。一開始由下往上是：紅、黃、藍、綠。</p>
+ ${svg(520, 230, `
+  <g font-size="16" font-weight="700" text-anchor="middle" fill="var(--ink)">
+   <rect x="60" y="176" width="220" height="34" rx="17" fill="var(--red)" fill-opacity=".25" stroke="var(--red)" stroke-width="2"/><text x="170" y="199">紅</text>
+   <rect x="60" y="136" width="220" height="34" rx="17" fill="var(--yellow)" fill-opacity=".25" stroke="var(--yellow)" stroke-width="2"/><text x="170" y="159">黃</text>
+   <rect x="60" y="96" width="220" height="34" rx="17" fill="var(--blue)" fill-opacity=".25" stroke="var(--blue)" stroke-width="2"/><text x="170" y="119">藍</text>
+   <rect x="60" y="56" width="220" height="34" rx="17" fill="var(--green)" fill-opacity=".25" stroke="var(--green)" stroke-width="2"/><text x="170" y="79">綠</text>
+  </g>
+  <line x1="40" y1="216" x2="300" y2="216" stroke="var(--soft)" stroke-width="2"/>
+  <path d="M325 70 V22" stroke="#7b6555" stroke-width="2" marker-end="url(#arw)" marker-start="url(#arw)"/>
+  <text x="342" y="40" font-size="15" fill="var(--ink)">只能從最上面</text><text x="342" y="62" font-size="15" fill="var(--ink)">拿走或放上</text>
+  ${bv(395, 105, 110)}`, '一疊盤子由下往上是紅黃藍綠')}
+ <p>接著依序發生：① 拿走 1 個　② 放上白盤子　③ 拿走 2 個　④ 放上黑盤子</p>`,
+ ask: '現在這疊盤子由上到下依序是什麼顏色？',
+ fields: [{t: 'text', pre: '由上到下：', ph: '例如：紅藍綠', ans: '黑黃紅', strip: '色盤子的'}],
+ hint: '試著把每一步做完後的盤子都寫下來。',
+ explain: '<b>答案：黑、黃、紅。</b>依序記錄（由下往上）：紅黃藍綠 → 紅黃藍 → 紅黃藍白 → 紅黃 → 紅黃黑。最後放上去的最先被拿走，這就是「堆疊」。'},
+
+{id: 'A02', title: '排隊買冰淇淋', concept: '佇列（先來的先走）',
+ body: `<p>河狸冰店前大家排成一列，<b>排在最前面的先買</b>，新來的要排到隊伍最後面。現在隊伍由前到後是：小樹、阿木、小石。</p>
+ ${svg(640, 210, `
+  <path d="M12 76 L75 30 L138 76Z" fill="var(--accent)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="20" y="76" width="110" height="104" rx="6" fill="var(--accent-tint)" stroke="var(--ink)" stroke-width="3"/>
+  <text x="75" y="118" text-anchor="middle" font-size="28">🍦</text>
+  <text x="75" y="160" text-anchor="middle" font-size="22" font-weight="700" fill="var(--ink)">冰店</text>
+  ${bv(160, 72, 90)}${bv(285, 72, 90)}${bv(410, 72, 90)}
+  <g font-size="17" font-weight="700" text-anchor="middle" fill="var(--ink)"><text x="205" y="190">小樹</text><text x="330" y="190">阿木</text><text x="455" y="190">小石</text></g>
+  <text x="205" y="60" text-anchor="middle" font-size="14" fill="var(--soft)">最前面</text>
+  <text x="455" y="60" text-anchor="middle" font-size="14" fill="var(--soft)">最後面</text>
+  <path d="M625 125 H530" stroke="#7b6555" stroke-width="2" marker-end="url(#arw)"/>
+  <text x="578" y="110" text-anchor="middle" font-size="14" fill="var(--soft)">新來的排這裡</text>`, '冰店前排隊：小樹、阿木、小石')}
+ <p>接著依序發生：</p>
+ ${steps(['排頭買完離開', '小花來排隊', '小葉來排隊', '排頭買完離開'])}`,
+ ask: '現在排在最前面的是誰？隊伍裡還有幾隻河狸？',
+ fields: [{t: 'radio', label: '最前面：', opts: ['小樹', '阿木', '小石', '小花', '小葉'], ans: '小石'}, {t: 'num', pre: '還有', post: '隻', ans: 3}],
+ hint: '把每一步之後的隊伍，由前到後寫下來。',
+ explain: '<b>答案：小石，還有 3 隻。</b>每一步後的隊伍（由前到後）：小樹 阿木 小石 → 阿木 小石 → 阿木 小石 小花 → 阿木 小石 小花 小葉 → 小石 小花 小葉。先來的先離開，這叫做「佇列」，和盤子「後放的先拿」（堆疊）剛好相反。'},
+
+{id: 'A03', title: '死巷裡的木頭', concept: '堆疊（進出順序）',
+ body: `<p>河狸把 1、2、3、4 號木頭<b>依照號碼順序</b>推進一條死巷，死巷只有右邊一個出入口。任何時候，都可以把<b>最靠近出口</b>的那根木頭拉出來送走，也可以先不拉，繼續推下一根進去。</p>
+ ${svg(680, 200, `
+  <path d="M410 50 H60 V150 H410" fill="var(--wood-tint)" stroke="var(--ink)" stroke-width="5" stroke-linejoin="round"/>
+  <text x="235" y="36" text-anchor="middle" font-size="15" fill="var(--ink)">死巷（只有右邊一個出入口）</text>
+  <text x="235" y="106" text-anchor="middle" font-size="16" fill="var(--soft)">← 推進去　　拉出來 →</text>
+  ${LOG(460, 100, 1)}${LOG(520, 100, 2)}${LOG(580, 100, 3)}${LOG(640, 100, 4)}
+  <text x="550" y="160" text-anchor="middle" font-size="14" fill="var(--soft)">等著被推進去（1 號最先）</text>`, '一條只有一個出入口的死巷，旁邊排著 1 到 4 號木頭')}`,
+ ask: '下面哪一種「送走的順序」不可能做到？',
+ fields: [{t: 'radio', opts: ['1→2→3→4', '4→3→2→1', '2→1→4→3', '3→1→4→2', '1→3→2→4'], ans: '3→1→4→2'}],
+ hint: '每個選項都試試看：要送走某根木頭之前，哪些木頭一定已經被推進去了？誰擋在誰前面？',
+ explain: '<b>答案：3→1→4→2。</b>要先送走 3，必須先推進 1、2、3，再拉出 3。這時最靠近出口的是 2，1 被擋在最裡面，不可能接著送走 1。其他都做得到，例如 2→1→4→3：推 1、推 2、拉 2、拉 1、推 3、推 4、拉 4、拉 3。'},
+
+{id: 'A04', title: '神奇的復原鍵', concept: '堆疊（復原紀錄）',
+ body: `<p>河狸用平板寫字。按一次「復原」，會取消<b>最近一次還沒被取消</b>的打字。河狸依序做了這些事：</p>
+ ${steps(['打「河」', '打「狸」', '打「好」', '!復原', '打「棒」', '!復原', '!復原', '打「國」'])}`,
+ ask: '最後畫面上的字是什麼？',
+ fields: [{t: 'text', pre: '畫面上：', ph: '寫出畫面上的字', ans: '河國'}],
+ hint: '每做一步，就把畫面上的字寫下來。第二次連續按復原時，要取消的是哪一個字？',
+ explain: '<b>答案：河國。</b>畫面依序是：河 → 河狸 → 河狸好 → 河狸（取消「好」）→ 河狸棒 → 河狸（取消「棒」）→ 河（取消「狸」）→ 河國。電腦把做過的動作一個個疊起來記住，復原時從最上面（最近的）拿掉，這也是堆疊。'},
+
+{id: 'A05', title: '火車調車場', concept: '堆疊（排序）',
+ body: `<p>車廂從右邊一節一節開過來。每節車廂可以 ① 直接開到左邊出口，或 ② 先開進下方的側線停著。側線是死巷，<b>最靠近出口的那節</b>隨時可以開出來，再開到左邊出口。側線停幾節都可以。</p>
+ ${svg(680, 220, `
+  <path d="M30 70 H650 M340 70 V190" stroke="var(--soft)" stroke-width="12" stroke-linecap="round"/>
+  <path d="M30 70 H650 M340 70 V190" stroke="var(--paper)" stroke-width="3" stroke-dasharray="10 8"/>
+  <text x="30" y="38" font-size="15" font-weight="700" fill="var(--ink)">← 左邊出口</text>
+  <text x="650" y="38" text-anchor="end" font-size="15" fill="var(--soft)">車廂從這裡開來 ←</text>
+  <text x="362" y="180" font-size="15" fill="var(--ink)">側線（死巷）</text>
+  <g stroke="var(--ink)" stroke-width="3">
+   <rect x="460" y="52" width="56" height="36" rx="6" fill="var(--pond-tint)"/><rect x="528" y="52" width="56" height="36" rx="6" fill="var(--pond-tint)"/><rect x="596" y="52" width="56" height="36" rx="6" fill="var(--pond-tint)"/>
+  </g>
+  <g font-size="18" font-weight="700" fill="var(--ink)" text-anchor="middle"><text x="488" y="77">?</text><text x="556" y="77">?</text><text x="624" y="77">?</text></g>`, '鐵路主線與一條側線')}
+ <p>目標：左邊出口要依照 <b>1、2、3、4</b> 的順序開出去。</p>`,
+ ask: '車廂用下面哪一種順序開過來（最先到的寫在最前面），才做得到？',
+ fields: [{t: 'radio', opts: ['2, 4, 1, 3', '3, 1, 4, 2', '3, 2, 1, 4', '2, 3, 1, 4'], ans: '3, 2, 1, 4'}],
+ hint: '一節一節試：還不能出去的車廂只好進側線。之後需要它時，它是不是在側線最外面？',
+ explain: '<b>答案：3, 2, 1, 4。</b>3 進側線、2 進側線（在 3 外面）、1 直接出去、2 從側線出去、3 出去、4 直接出去。其他三種都會卡住，例如 2, 3, 1, 4：2 和 3 都得先進側線，3 在外面，1 出去後下一個要 2，但 2 被 3 擋住了。'},
+
+/* ===== B 編碼與二進位 ===== */
+{id: 'B01', title: '翻牌變數字', concept: '二進位',
+ body: `<p>五張卡片的點數是 16、8、4、2、1，翻到正面才算點數。例如只翻開 4 和 1，就代表 5。</p>
+ ${svg(640, 170, `
+  <g font-size="28" font-weight="700" text-anchor="middle">
+   <rect x="20" y="20" width="100" height="120" rx="10" fill="var(--line)" fill-opacity=".35" stroke="var(--soft)" stroke-dasharray="6 4" stroke-width="2"/><text x="70" y="90" fill="var(--soft)">16</text>
+   <rect x="145" y="20" width="100" height="120" rx="10" fill="var(--line)" fill-opacity=".35" stroke="var(--soft)" stroke-dasharray="6 4" stroke-width="2"/><text x="195" y="90" fill="var(--soft)">8</text>
+   <rect x="270" y="20" width="100" height="120" rx="10" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="3"/><text x="320" y="90" fill="var(--ink)">4</text>
+   <rect x="395" y="20" width="100" height="120" rx="10" fill="var(--line)" fill-opacity=".35" stroke="var(--soft)" stroke-dasharray="6 4" stroke-width="2"/><text x="445" y="90" fill="var(--soft)">2</text>
+   <rect x="520" y="20" width="100" height="120" rx="10" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="3"/><text x="570" y="90" fill="var(--ink)">1</text>
+  </g>
+  <text x="320" y="164" font-size="15" text-anchor="middle" fill="var(--soft)">範例：翻開 4 和 1 → 4 + 1 = 5</text>`, '範例：翻開 4 和 1 代表 5')}`,
+ ask: '要代表數字 21，需要翻開哪幾張卡片？',
+ fields: [{t: 'multi', opts: ['16', '8', '4', '2', '1'], ans: ['16', '4', '1']}],
+ hint: '從最大的卡片開始，能用就翻開，再看剩下多少。',
+ explain: '<b>答案：16、4、1。</b>從最大的開始：21 先用 16，剩 5；8 太大不翻；用 4，剩 1；2 太大不翻；用 1。寫成「翻＝1、不翻＝0」就是 10101，這是 21 的二進位。五張全翻最大是 31。'},
+
+{id: 'B02', title: '河狸燈塔', concept: '二進位',
+ body: `<p>河狸燈塔有 4 盞燈，分別代表 8、4、2、1。把<b>亮著的燈</b>代表的數加起來，就是燈塔傳出的數字。</p>
+ ${svg(600, 200, `
+  <circle cx="90" cy="80" r="56" fill="var(--sun)" opacity=".25"/><circle cx="90" cy="80" r="40" fill="var(--sun)" stroke="var(--ink)" stroke-width="3"/>
+  <circle cx="230" cy="80" r="40" fill="var(--line)" stroke="var(--soft)" stroke-width="3"/>
+  <circle cx="370" cy="80" r="56" fill="var(--sun)" opacity=".25"/><circle cx="370" cy="80" r="40" fill="var(--sun)" stroke="var(--ink)" stroke-width="3"/>
+  <circle cx="510" cy="80" r="56" fill="var(--sun)" opacity=".25"/><circle cx="510" cy="80" r="40" fill="var(--sun)" stroke="var(--ink)" stroke-width="3"/>
+  <g font-size="26" font-weight="700" text-anchor="middle" fill="var(--ink)"><text x="90" y="166">8</text><text x="230" y="166">4</text><text x="370" y="166">2</text><text x="510" y="166">1</text></g>
+  <g font-size="14" text-anchor="middle" fill="var(--soft)"><text x="90" y="190">亮</text><text x="230" y="190">暗</text><text x="370" y="190">亮</text><text x="510" y="190">亮</text></g>`, '四盞燈：8 亮、4 暗、2 亮、1 亮')}`,
+ ask: '燈塔現在傳出的數字是多少？4 盞燈全部亮起來時，又是多少？',
+ fields: [{t: 'num', pre: '現在：', ans: 11}, {t: 'num', pre: '全亮：', ans: 15}],
+ hint: '只把亮著的燈加起來。',
+ explain: '<b>答案：現在是 11，全亮是 15。</b>亮的是 8、2、1：8＋2＋1＝11。四盞全亮是 8＋4＋2＋1＝15，所以 4 盞燈可以表示 0 到 15，共 16 種數字。'},
+
+{id: 'B03', title: '藍舌頭魔法果汁', concept: '二進位（用最少的試驗找答案）',
+ body: `<p>河狸魔法師做了 7 瓶果汁，編號 1～7。其中<b>只有一瓶</b>加了「藍舌粉」，喝到的河狸舌頭會變藍。三隻戴不同帽子的小河狸各喝了幾瓶：</p>
+ ${svg(520, 160, `
+  ${bv(40, 34, 100)}${bv(210, 34, 100)}${bv(380, 34, 100)}
+  <g stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round">
+   <path d="M74 60 L106 60 L90 26Z" fill="var(--red)"/><path d="M244 60 L276 60 L260 26Z" fill="var(--green)"/><path d="M414 60 L446 60 L430 26Z" fill="var(--blue)"/>
+  </g>
+  <g font-size="16" font-weight="700" text-anchor="middle" fill="var(--ink)"><text x="90" y="152">紅帽</text><text x="260" y="152">綠帽</text><text x="430" y="152">藍帽</text></g>`, '戴紅帽、綠帽、藍帽的三隻小河狸')}
+ <div class="table-wrap"><table>
+  <tr><th></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>結果</th></tr>
+  <tr><th>紅帽</th><td></td><td></td><td></td><td>●</td><td>●</td><td>●</td><td>●</td><td>舌頭變藍</td></tr>
+  <tr><th>綠帽</th><td></td><td>●</td><td>●</td><td></td><td></td><td>●</td><td>●</td><td>沒有變</td></tr>
+  <tr><th>藍帽</th><td>●</td><td></td><td>●</td><td></td><td>●</td><td></td><td>●</td><td>舌頭變藍</td></tr>
+ </table></div>
+ <p class="small">● 表示有喝這一瓶。</p>`,
+ ask: '藍舌粉在第幾瓶？',
+ fields: [{t: 'num', pre: '第', post: '瓶', ans: 5}],
+ hint: '那一瓶一定被紅帽和藍帽喝過，但是綠帽沒有喝過。',
+ explain: '<b>答案：第 5 瓶。</b>紅帽和藍帽都喝過的是 5 和 7；綠帽喝過 7，所以只剩 5。再仔細看：紅帽喝的 4～7 翻牌時都要用到「4」，綠帽喝的都要用到「2」，藍帽喝的都要用到「1」。結果是紅＋藍，4＋1＝5。用二進位安排試喝，3 隻河狸就能從 7 瓶中找出答案。'},
+
+{id: 'B04', title: '需要幾張卡片', concept: '二進位（位數）',
+ body: `<p>翻牌卡片的點數是 1、2、4、8、16、……，每一張都是前一張的 2 倍。把翻開的卡片點數加起來，就代表一個數。</p>
+ ${svg(560, 130, `
+  <g font-size="24" font-weight="700" text-anchor="middle" fill="var(--ink)">
+   <rect x="20" y="15" width="70" height="90" rx="8" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="3"/><text x="55" y="68">1</text>
+   <rect x="110" y="15" width="70" height="90" rx="8" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="3"/><text x="145" y="68">2</text>
+   <rect x="200" y="15" width="70" height="90" rx="8" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="3"/><text x="235" y="68">4</text>
+   <rect x="290" y="15" width="70" height="90" rx="8" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="3"/><text x="325" y="68">8</text>
+   <rect x="380" y="15" width="70" height="90" rx="8" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="3"/><text x="415" y="68">16</text>
+   <text x="505" y="68" fill="var(--soft)">……</text>
+  </g>`, '點數 1、2、4、8、16 的卡片，後面還有更多')}`,
+ ask: '要能表示 0 到 100 的每一個整數，最少需要幾張卡片？',
+ fields: [{t: 'num', pre: '最少', post: '張', ans: 7}],
+ hint: '算算看：用 5 張、6 張、7 張卡片全部翻開，最大各是多少？',
+ explain: '<b>答案：7 張。</b>6 張（1、2、4、8、16、32）全部翻開最大只有 63，不到 100；7 張再加上 64，最大是 127，就夠了。每多一張卡，能表示的數量就變成 2 倍。'},
+
+{id: 'B05', title: '點點線線密碼', concept: '編碼（一段密碼有幾種讀法）',
+ body: `<p>河狸用點「●」和線「—」做成密碼本，而且字和字之間<b>不留空格</b>：</p>
+ <div class="codebook"><div><b>河</b> ＝ ●</div><div><b>狸</b> ＝ —</div><div><b>木</b> ＝ ●—</div><div><b>水</b> ＝ —●</div></div>
+ <p>例如「●—」可以讀成「河狸」，也可以讀成「木」，共有 2 種讀法。</p>`,
+ ask: '「●—●—」共有幾種不同的讀法？',
+ fields: [{t: 'num', ans: 5, post: '種'}],
+ hint: '第一個字可能是「●」（河），也可能是「●—」（木）。分成兩種情況，再一路往下分。',
+ explain: '<b>答案：5 種。</b>第一個字讀「河」或「木」，再一路分下去，可以讀成：河狸河狸、河狸木、河水狸、木河狸、木木。真正的摩斯密碼在字母之間會停頓，就是為了避免「同一段密碼有好幾種讀法」。'},
+
+/* ===== C 地圖與路線 ===== */
+{id: 'C01', title: '一筆畫挑戰', concept: '圖（一筆畫）',
+ body: `<p>一筆畫就是：筆尖不離開紙，而且<b>同一條線不能畫兩次</b>，把整個圖形畫完。</p>
+ ${svg(620, 215, `
+  <g stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+   <path d="M50 30H170V150H50Z M50 30L170 150 M170 30L50 150"/>
+   <path d="M250 30H370V150H250Z M250 30L370 150"/>
+   <path d="M460 90H580 M520 30V150"/>
+  </g>
+  <g fill="var(--accent)">
+   <circle cx="50" cy="30" r="6"/><circle cx="170" cy="30" r="6"/><circle cx="50" cy="150" r="6"/><circle cx="170" cy="150" r="6"/><circle cx="110" cy="90" r="6"/>
+   <circle cx="250" cy="30" r="6"/><circle cx="370" cy="30" r="6"/><circle cx="250" cy="150" r="6"/><circle cx="370" cy="150" r="6"/>
+   <circle cx="460" cy="90" r="6"/><circle cx="580" cy="90" r="6"/><circle cx="520" cy="30" r="6"/><circle cx="520" cy="150" r="6"/><circle cx="520" cy="90" r="6"/>
+  </g>
+  <g font-size="20" font-weight="700" text-anchor="middle" fill="var(--ink)"><text x="110" y="200">甲</text><text x="310" y="200">乙</text><text x="520" y="200">丙</text></g>`, '甲：正方形加兩條對角線；乙：正方形加一條對角線；丙：十字')}`,
+ ask: '哪一個圖形可以一筆畫完成？',
+ fields: [{t: 'radio', opts: ['甲', '乙', '丙'], ans: '乙'}],
+ hint: '數一數每個點連了幾條線。連了單數條線的點有幾個？',
+ explain: '<b>答案：乙。</b>連了單數條線的點叫做「奇點」。奇點是 0 個或 2 個才能一筆畫（有 2 個時要從其中一個奇點出發）。甲的四個角都連 3 條線，有 4 個奇點；丙的四個端點各連 1 條，也有 4 個；乙只有 2 個奇點，從其中一個出發就畫得完。'},
+
+{id: 'C02', title: '回家最少幾段路', concept: '圖（最少步數）',
+ body: `<p>河狸要從「家」走到「湖」。每一條線是一段路，線的長短不重要，只算<b>走了幾段</b>。</p>
+ ${svg(660, 280, graph({家: [60, 140], 橋: [190, 50], 樹: [190, 230], 石: [330, 50], 草: [330, 140], 花: [330, 230], 洞: [470, 90], 湖: [600, 150]},
+   [['家', '橋'], ['家', '樹'], ['橋', '石'], ['橋', '草'], ['樹', '草'], ['樹', '花'], ['石', '洞'], ['草', '洞'], ['花', '湖'], ['洞', '湖']], ['家', '湖']), '家、橋、樹、石、草、花、洞、湖之間的道路圖')}`,
+ ask: '從家到湖，最少要走幾段路？',
+ fields: [{t: 'num', pre: '最少', post: '段', ans: 3}],
+ hint: '先找出走 1 段能到哪裡，再找走 2 段能到哪裡……',
+ explain: '<b>答案：3 段，家→樹→花→湖。</b>從家出發，走 1 段能到橋、樹；走 2 段能到石、草、花；第 3 段就能從花到湖。花到湖那條線畫得很長，但只算 1 段。像這樣一圈一圈往外找，就能找到最少的段數。'},
+
+{id: 'C03', title: '送信的最短路線', concept: '最短路徑',
+ body: `<p>郵差河狸要從 A 村送信到 F 村。線旁的數字是走那條路要幾分鐘。</p>
+ ${svg(640, 300, graph({A: [80, 150], B: [240, 60], C: [240, 240], D: [420, 60], E: [420, 240], F: [580, 150]},
+   [['A', 'B', 4, 148, 94], ['A', 'C', 2, 148, 222], ['B', 'C', 1, 256, 156], ['B', 'D', 5, 330, 50], ['C', 'D', 8, 346, 168], ['C', 'E', 10, 330, 266], ['D', 'E', 2, 436, 156], ['D', 'F', 6, 512, 94], ['E', 'F', 3, 512, 222]], ['A', 'F'])
+   + `<text x="80" y="198" font-size="14" text-anchor="middle" fill="var(--soft)">出發</text><text x="580" y="198" font-size="14" text-anchor="middle" fill="var(--soft)">目的地</text>`, '村莊道路圖')}`,
+ ask: '從 A 到 F 最少要幾分鐘？請寫出經過的村莊順序。',
+ fields: [{t: 'num', ans: 13, post: '分鐘'}, {t: 'text', pre: '路線：', ph: '例如：ABDF', ans: 'ACBDEF'}],
+ hint: '直接走的路不一定最快，試試看繞一下。',
+ explain: '<b>答案：13 分鐘，A→C→B→D→E→F。</b>先算到每個村莊最快要幾分鐘：C 是 2；B 直走要 4，繞 C 只要 3；D 是 3＋5＝8；E 是 8＋2＝10；F 是 10＋3＝13（走 D→F 要 14）。看起來直達的路不一定最快。'},
+
+{id: 'C04', title: '上學有幾種走法', concept: '路徑計數',
+ body: `<p>河狸要沿著道路從家（左上角）走到學校（右下角），每一步<b>只能往右或往下</b>走。</p>
+ ${svg(640, 290, `
+  <g stroke="var(--soft)" stroke-width="6" stroke-linecap="round">
+   <path d="M130 60H490M130 150H490M130 240H490M130 60V240M250 60V240M370 60V240M490 60V240"/>
+  </g>
+  <g fill="var(--paper)" stroke="var(--soft)" stroke-width="2">
+   <circle cx="250" cy="60" r="6"/><circle cx="370" cy="60" r="6"/><circle cx="490" cy="60" r="6"/>
+   <circle cx="130" cy="150" r="6"/><circle cx="250" cy="150" r="6"/><circle cx="370" cy="150" r="6"/><circle cx="490" cy="150" r="6"/>
+   <circle cx="130" cy="240" r="6"/><circle cx="250" cy="240" r="6"/><circle cx="370" cy="240" r="6"/>
+  </g>
+  <circle cx="130" cy="60" r="12" fill="var(--accent)" stroke="var(--ink)" stroke-width="2"/>
+  <circle cx="490" cy="240" r="12" fill="var(--accent)" stroke="var(--ink)" stroke-width="2"/>
+  ${bv(30, 22, 80)}
+  <path d="M515 228 L550 198 L585 228 V276 H515Z" fill="var(--pond-tint)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+  <text x="550" y="262" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">學校</text>
+  <text x="620" y="34" text-anchor="end" font-size="15" fill="var(--soft)">只能往右 → 或往下 ↓</text>`, '3 格寬、2 格高的方格道路，家在左上角，學校在右下角')}`,
+ ask: '從家到學校，一共有幾種不同的走法？',
+ fields: [{t: 'num', ans: 10, post: '種'}],
+ hint: '在每個路口寫上「走到這裡有幾種走法」。一個路口的走法＝從上面來的＋從左邊來的。',
+ explain: '<b>答案：10 種。</b>在每個路口寫上走到那裡的走法數：最上面一排和最左邊一行都只有 1 種；其他路口＝上面的數＋左邊的數。第二排依序是 1、2、3、4，第三排是 1、3、6、10。'},
+
+{id: 'C05', title: '最省木頭的橋', concept: '最小生成樹',
+ body: `<p>河狸要在 5 座小島之間蓋橋，讓每一座島都能走到其他島（可以經過別的島）。虛線是可以蓋橋的地方，數字是要用幾根木頭。</p>
+ ${svg(650, 290, `
+  <rect x="4" y="4" width="642" height="282" rx="18" fill="var(--pond-tint)"/>
+  <g stroke="var(--wood)" stroke-width="4" stroke-dasharray="9 6">
+   <line x1="80" y1="150" x2="230" y2="55"/><line x1="80" y1="150" x2="250" y2="235"/><line x1="230" y1="55" x2="250" y2="235"/>
+   <line x1="230" y1="55" x2="430" y2="220"/><line x1="250" y1="235" x2="430" y2="220"/><line x1="430" y1="220" x2="570" y2="110"/><line x1="230" y1="55" x2="570" y2="110"/>
+  </g>
+  <g font-size="19" font-weight="700" text-anchor="middle" fill="var(--ink)" stroke="var(--pond-tint)" stroke-width="6" paint-order="stroke">
+   <text x="140" y="92">3</text><text x="150" y="214">5</text><text x="258" y="150">4</text><text x="350" y="128">6</text><text x="340" y="254">2</text><text x="516" y="182">3</text><text x="400" y="72">8</text>
+  </g>
+  <g stroke="var(--good)" stroke-width="3" fill="var(--good-tint)">
+   <ellipse cx="80" cy="150" rx="34" ry="26"/><ellipse cx="230" cy="55" rx="34" ry="26"/><ellipse cx="250" cy="235" rx="34" ry="26"/><ellipse cx="430" cy="220" rx="34" ry="26"/><ellipse cx="570" cy="110" rx="34" ry="26"/>
+  </g>
+  <g font-size="20" font-weight="700" text-anchor="middle" fill="var(--ink)"><text x="80" y="157">A</text><text x="230" y="62">B</text><text x="250" y="242">C</text><text x="430" y="227">D</text><text x="570" y="117">E</text></g>`, '5 座島與可以蓋橋的位置')}`,
+ ask: '要讓 5 座島全部連在一起，最少要用幾根木頭？',
+ fields: [{t: 'num', pre: '最少', post: '根木頭', ans: 12}],
+ hint: '從最便宜的橋開始挑。如果一座橋連接的兩座島本來就已經走得到，就不用蓋。',
+ explain: '<b>答案：12 根木頭。</b>從最便宜的開始挑：C–D（2）、A–B（3）、D–E（3）、B–C（4）。這時 5 座島已經全部連通，共 2＋3＋3＋4＝12，其他橋都不需要了。5 座島最少只要 4 座橋就能全部連起來。'},
+
+/* ===== D 圖片與壓縮 ===== */
+{id: 'D01', title: '數字畫圖片', concept: '像素與編碼',
+ body: `<p>電腦把圖片切成很多小格子。河狸用 <b>1 代表黑格、0 代表白格</b>，每一列由左到右寫下來。例如第 1 列寫成 1111。</p>
+ ${pix(['1111', '1001', '1011', '1111'], {cell: 40})}`,
+ ask: '第 3 列要怎麼寫？',
+ fields: [{t: 'text', pre: '第 3 列：', ph: '例如：1111', ans: '1011'}],
+ hint: '由左到右看第 3 列，黑的寫 1，白的寫 0。',
+ explain: '<b>答案：1011。</b>第 3 列由左到右是黑、白、黑、黑，寫成 1、0、1、1。電腦裡的圖片就是很多小格子（像素），每一格用數字記錄顏色。'},
+
+{id: 'D02', title: '重複字縮寫法', concept: '資料壓縮',
+ body: `<p>河狸發現訊息裡常有連續重複的字，就把它寫成「字＋連續次數」來節省空間：</p>
+ ${steps(['啊啊啊啊啊 → 啊5', '好好棒 → 好2棒1'])}`,
+ ask: '「嗚嗚嗚嘿嘿哈哈哈哈」要怎麼寫？用這個方法寫「河狸」，會變長還是變短？',
+ fields: [{t: 'text', pre: '寫成：', ph: '例如：啊5', ans: '嗚3嘿2哈4'}, {t: 'radio', label: '「河狸」會：', opts: ['變短', '一樣長', '變長'], ans: '變長'}],
+ hint: '「河狸」沒有重複的字，每個字後面都要加上 1。',
+ explain: '<b>答案：嗚3嘿2哈4；「河狸」會變長。</b>「河狸」要寫成「河1狸1」，從 2 個字變成 4 個字。這種壓縮法只有在很多字連續重複時才省空間，用錯地方反而更佔空間。'},
+
+{id: 'D03', title: '黑白圖片密碼', concept: '資料壓縮',
+ body: `<p>圖片每列 7 格。每列的密碼<b>從白色開始數</b>，黑白輪流，數字是連續幾格同色。例如「3, 1, 3」＝白白白黑白白白；第一個數字是 0，表示一開始就是黑色。</p>
+ <p>點一下格子可以塗黑或塗回白色，幫助你解題：</p>`,
+ tool: {t: 'paint', rows: 5, cols: 7, side: '第 1 列：3, 1, 3<br>第 2 列：2, 3, 2<br>第 3 列：1, 5, 1<br>第 4 列：0, 7<br>第 5 列：3, 1, 3'},
+ ask: '這張圖共有幾格黑色？畫出來像什麼？',
+ fields: [{t: 'num', ans: 17, post: '格'}, {t: 'select', pre: '像：', opts: ['房子', '樹', '愛心', '魚'], ans: '樹'}],
+ hint: '先在格子裡塗塗看，再數黑格。',
+ explain: '<b>答案：17 格，像一棵樹。</b>黑格依序是 1、3、5、7、1 格，加起來 17。相同顏色連得越長，這種記法就越省空間。'},
+
+{id: 'D04', title: '幫圖片寫密碼', concept: '資料壓縮（編碼）',
+ body: `<p>規則和「黑白圖片密碼」一樣：每列<b>從白色開始數</b>，黑白輪流，數字是連續幾格同色；如果一開始就是黑色，第一個數字寫 0。例如第 1 列是「2, 3, 2」。</p>
+ ${pix(['0011100', '1000001', '1101011'], {cell: 36})}`,
+ ask: '請寫出第 2 列和第 3 列的密碼。',
+ fields: [{t: 'text', pre: '第 2 列：', ph: '例如：2, 3, 2', ans: '0151'}, {t: 'text', pre: '第 3 列：', ph: '例如：2, 3, 2', ans: '021112'}],
+ hint: '第 2 列的第一格是黑色，所以密碼要從 0 開始。',
+ explain: '<b>答案：第 2 列 0, 1, 5, 1；第 3 列 0, 2, 1, 1, 1, 2。</b>第 2 列一開始就是黑色，先寫 0（白色 0 格），接著黑 1、白 5、黑 1。第 3 列：白 0、黑 2、白 1、黑 1、白 1、黑 2。顏色變化越多，密碼就越長。'},
+
+{id: 'D05', title: '切四塊的圖片密碼', concept: '資料壓縮（四分法）',
+ body: `<p>河狸用這個方法記錄正方形圖片：</p>
+ <div class="rulebox"><ol><li>整塊全黑，寫「黑」；整塊全白，寫「白」。</li><li>有黑也有白，就寫「分」，再把它切成 4 塊小正方形，依照<b>左上、右上、左下、右下</b>的順序，每一塊再用同樣的方法寫下去。</li></ol></div>
+ <p>例如右邊這張 2 × 2 的圖寫成「分 黑 白 白 白」，共 5 個字。</p>
+ <div class="paint-row">${pix(['1100', '1100', '1000', '1100'], {cell: 40, quad: true})}${pix(['10', '00'], {cell: 30, label: false})}</div>`,
+ ask: '左邊那張 4 × 4 的圖片，寫成密碼共有幾個字？如果整張圖都是白色，要寫幾個字？',
+ fields: [{t: 'num', pre: '這張圖：', post: '個字', ans: 9}, {t: 'num', pre: '全白：', post: '個字', ans: 1}],
+ hint: '橘色線把圖切成 4 塊。先看每一塊是全黑、全白，還是有黑有白。',
+ explain: '<b>答案：9 個字；全白只要 1 個字。</b>整張有黑有白 →「分」。左上全黑 →「黑」，右上全白 →「白」，左下有黑有白 →「分」，再寫 4 小格「黑、白、黑、黑」，右下全白 →「白」。合起來是：分 黑 白 分 黑 白 黑 黑 白，共 9 個字，比一格一格寫的 16 個字少。大片同色越多，這種寫法越省。'},
+
+/* ===== E 邏輯推理 ===== */
+{id: 'E01', title: '誰坐在中間', concept: '邏輯推理（排列）',
+ body: `<p>阿土、小美、大寶三隻河狸並排坐成一排（左、中、右）。</p>
+ ${svg(600, 190, `
+  ${bv(45, 20, 110)}${bv(245, 20, 110)}${bv(445, 20, 110)}
+  <g fill="var(--sun)" stroke="var(--ink)" stroke-width="2"><circle cx="145" cy="34" r="16"/><circle cx="345" cy="34" r="16"/><circle cx="545" cy="34" r="16"/></g>
+  <g font-size="20" font-weight="700" text-anchor="middle" fill="var(--ink)"><text x="145" y="41">?</text><text x="345" y="41">?</text><text x="545" y="41">?</text></g>
+  <g font-size="17" text-anchor="middle" fill="var(--soft)"><text x="100" y="170">左邊</text><text x="300" y="170">中間</text><text x="500" y="170">右邊</text></g>`, '三個座位：左、中、右')}
+ <p>① 大寶坐在小美的<b>右邊隔壁</b>。　② 阿土<b>不是</b>坐在最右邊。</p>`,
+ ask: '三隻河狸各坐在哪裡？',
+ fields: [{t: 'select', pre: '左邊：', opts: ['阿土', '小美', '大寶'], ans: '阿土'}, {t: 'select', pre: '中間：', opts: ['阿土', '小美', '大寶'], ans: '小美'}, {t: 'select', pre: '右邊：', opts: ['阿土', '小美', '大寶'], ans: '大寶'}],
+ hint: '先只看線索①，小美和大寶可以怎麼坐？再用線索②刪掉不行的。',
+ explain: '<b>答案：左邊阿土、中間小美、右邊大寶。</b>大寶在小美的右邊隔壁，只有兩種坐法：「小美、大寶、阿土」或「阿土、小美、大寶」。第一種阿土坐最右邊，不符合線索②，所以是第二種。'},
+
+{id: 'E02', title: '誰愛吃什麼', concept: '邏輯推理（表格刪去法）',
+ body: `<p>阿土、小美、大寶各喜歡一種<b>不同的</b>食物：樹皮、蘋果、水草。</p>
+ <p>① 阿土不喜歡蘋果，也不喜歡水草。　② 小美不喜歡水草。</p>
+ <p class="small">下面的表格可以點一下打 ✗ 或 ○，幫助你思考：</p>`,
+ tool: {t: 'scratch', rows: ['阿土', '小美', '大寶'], cols: ['樹皮', '蘋果', '水草']},
+ ask: '三隻河狸各喜歡什麼？',
+ fields: [{t: 'select', pre: '阿土：', opts: ['樹皮', '蘋果', '水草'], ans: '樹皮'}, {t: 'select', pre: '小美：', opts: ['樹皮', '蘋果', '水草'], ans: '蘋果'}, {t: 'select', pre: '大寶：', opts: ['樹皮', '蘋果', '水草'], ans: '水草'}],
+ hint: '先找只剩下一種可能的那隻河狸。',
+ explain: '<b>答案：阿土—樹皮、小美—蘋果、大寶—水草。</b>阿土不吃蘋果和水草，只剩樹皮。樹皮被阿土選走了，小美又不吃水草，所以小美是蘋果，剩下的水草給大寶。把不可能的打 ✗，是解這類題目的好方法。'},
+
+{id: 'E03', title: '誰打破了花瓶', concept: '邏輯推理（假設法）',
+ body: `<p>花瓶被三隻河狸中的其中一隻打破了。三隻中<b>只有一隻說真話</b>。</p>
+ ${svg(660, 210, `
+  <g font-size="15" text-anchor="middle" fill="var(--ink)">
+   <rect x="20" y="8" width="190" height="48" rx="14" fill="var(--pond-tint)" stroke="var(--pond)" stroke-width="2"/><text x="115" y="38">「是小美打破的。」</text>
+   <rect x="235" y="8" width="190" height="48" rx="14" fill="var(--pond-tint)" stroke="var(--pond)" stroke-width="2"/><text x="330" y="38">「不是我打破的。」</text>
+   <rect x="450" y="8" width="190" height="48" rx="14" fill="var(--pond-tint)" stroke="var(--pond)" stroke-width="2"/><text x="545" y="38">「不是我打破的。」</text>
+  </g>
+  ${bv(65, 66, 100)}${bv(280, 66, 100)}${bv(495, 66, 100)}
+  <g font-size="17" font-weight="700" text-anchor="middle" fill="var(--ink)"><text x="115" y="200">阿土</text><text x="330" y="200">小美</text><text x="545" y="200">大寶</text></g>`, '三隻河狸的說法')}`,
+ ask: '花瓶是誰打破的？',
+ fields: [{t: 'radio', opts: ['阿土', '小美', '大寶'], ans: '大寶'}],
+ hint: '假設是某一隻打破的，再數一數有幾隻說真話。',
+ explain: '<b>答案：大寶。</b>逐一假設：如果是阿土，小美和大寶都說真話（2 隻）；如果是小美，阿土和大寶說真話（2 隻）；如果是大寶，只有小美說真話（1 隻），符合條件。'},
+
+{id: 'E04', title: '誠實族與說謊族', concept: '邏輯推理（矛盾）',
+ body: `<p>河狸島上住著兩族：<b>誠實族永遠說真話，說謊族永遠說假話</b>。小石說了一句話，旁邊的小水沒有說話。</p>
+ ${svg(560, 215, `
+  <rect x="20" y="10" width="260" height="48" rx="14" fill="var(--pond-tint)" stroke="var(--pond)" stroke-width="2"/>
+  <path d="M120 57 L132 76 L144 57Z" fill="var(--pond-tint)" stroke="var(--pond)" stroke-width="2" stroke-linejoin="round"/><path d="M121 56 H143" stroke="var(--pond-tint)" stroke-width="4"/>
+  <text x="150" y="40" text-anchor="middle" font-size="16" fill="var(--ink)">「我們兩個都是說謊族。」</text>
+  <rect x="380" y="14" width="110" height="44" rx="14" fill="var(--line)" fill-opacity=".5" stroke="var(--soft)" stroke-width="2"/>
+  <text x="435" y="42" text-anchor="middle" font-size="16" fill="var(--soft)">……</text>
+  ${bv(75, 78, 110)}${bv(380, 78, 110)}
+  <g font-size="17" font-weight="700" text-anchor="middle" fill="var(--ink)"><text x="130" y="208">小石</text><text x="435" y="208">小水</text></g>`, '小石說：我們兩個都是說謊族。小水沒說話。')}`,
+ ask: '小石和小水各是哪一族？',
+ fields: [{t: 'select', pre: '小石：', opts: ['誠實族', '說謊族'], ans: '說謊族'}, {t: 'select', pre: '小水：', opts: ['誠實族', '說謊族'], ans: '誠實族'}],
+ hint: '先假設小石是誠實族，他說的話會不會出問題？',
+ explain: '<b>答案：小石是說謊族，小水是誠實族。</b>如果小石是誠實族，他的話是真的，那他就是說謊族，自相矛盾，所以小石是說謊族。說謊族的話是假的，所以「兩個都是說謊族」不成立；小石已經是說謊族，小水就一定是誠實族。'},
+
+{id: 'E05', title: '河狸賽跑', concept: '邏輯推理（排序線索）',
+ body: `<p>阿土、小美、大寶、小石、小花五隻河狸賽跑，沒有人同時到達。</p>
+ ${svg(640, 150, `${bv(15, 10, 100)}${bv(140, 10, 100)}${bv(265, 10, 100)}${bv(390, 10, 100)}${bv(515, 10, 100)}
+  <g font-size="17" font-weight="700" text-anchor="middle" fill="var(--ink)"><text x="65" y="140">阿土</text><text x="190" y="140">小美</text><text x="315" y="140">大寶</text><text x="440" y="140">小石</text><text x="565" y="140">小花</text></g>`, '五隻賽跑的河狸')}
+ <div class="rulebox"><ol><li>阿土比小美快。</li><li>大寶是第 3 名。</li><li>小石比阿土快，但小石不是第 1 名。</li></ol></div>`,
+ ask: '第 1 名和第 4 名各是誰？',
+ fields: [{t: 'select', pre: '第 1 名：', opts: ['阿土', '小美', '大寶', '小石', '小花'], ans: '小花'}, {t: 'select', pre: '第 4 名：', opts: ['阿土', '小美', '大寶', '小石', '小花'], ans: '阿土'}],
+ hint: '小石、阿土、小美三隻的先後順序已經知道了。他們要排進剩下的哪些名次？',
+ explain: '<b>答案：第 1 名小花，第 4 名阿土。</b>大寶佔了第 3 名，剩下 1、2、4、5 名。小石比阿土快、阿土比小美快。小石不是第 1 名；如果小石是第 4 名，後面只剩 1 個名次，排不下阿土和小美。所以小石第 2、阿土第 4、小美第 5，第 1 名就是線索裡沒提到的小花。'},
+
+/* ===== F 規律與樣式 ===== */
+{id: 'F01', title: '火柴排正方形', concept: '找規律',
+ body: `<p>排 1 個正方形要 4 根火柴，2 個要 7 根，3 個要 10 根。</p>
+ ${svg(640, 150, `
+  <g stroke="var(--sun)" stroke-width="6" stroke-linecap="round">
+   <path d="M28 30H82M28 90H82M20 38V82M90 38V82"/>
+   <path d="M158 30H212M228 30H282M158 90H212M228 90H282M150 38V82M220 38V82M290 38V82"/>
+   <path d="M368 30H422M438 30H492M508 30H562M368 90H422M438 90H492M508 90H562M360 38V82M430 38V82M500 38V82M570 38V82"/>
+  </g>
+  <g font-size="15" text-anchor="middle" fill="var(--ink)"><text x="55" y="130">1 個：4 根</text><text x="220" y="130">2 個：7 根</text><text x="465" y="130">3 個：10 根</text><text x="610" y="70" font-size="26" fill="var(--soft)">…</text></g>`, '火柴排 1、2、3 個正方形')}`,
+ ask: '照這個方式排 20 個正方形，需要幾根火柴？',
+ fields: [{t: 'num', ans: 61, post: '根'}],
+ hint: '每多一個正方形，要多幾根？',
+ explain: '<b>答案：61 根。</b>第 1 個要 4 根，之後每多 1 個只要再加 3 根（和前一個共用一邊）：4＋3 × 19＝61。也可以想成「正方形數 × 3＋1」。'},
+
+{id: 'F02', title: '河狸串珠子', concept: '找規律（循環）',
+ body: `<p>河狸用「紅、黃、藍、藍」的順序一直重複串珠子。</p>
+ ${svg(620, 90, `<line x1="10" y1="40" x2="540" y2="40" stroke="var(--soft)" stroke-width="2"/>
+  ${['red', 'yellow', 'blue', 'blue'].concat(['red', 'yellow', 'blue', 'blue'], ['red', 'yellow', 'blue', 'blue']).map((c, i) => `<circle cx="${30 + i * 44}" cy="40" r="17" fill="var(--${c})" stroke="var(--ink)" stroke-width="2"/><text x="${30 + i * 44}" y="80" text-anchor="middle" font-size="12" fill="var(--soft)">${i + 1}</text>`).join('')}
+  <text x="580" y="48" text-anchor="middle" font-size="24" fill="var(--soft)">…</text>`, '珠子依紅黃藍藍重複')}`,
+ ask: '第 30 顆珠子是什麼顏色？前 30 顆裡有幾顆藍色？',
+ fields: [{t: 'radio', label: '第 30 顆：', opts: ['紅', '黃', '藍'], ans: '黃'}, {t: 'num', pre: '藍色共', post: '顆', ans: 14}],
+ hint: '每 4 顆是一組。30 顆裡有幾組完整的？還多出幾顆？',
+ explain: '<b>答案：第 30 顆是黃色；有 14 顆藍色。</b>每 4 顆一組，30 ÷ 4＝7 組，餘 2。第 30 顆是一組裡的第 2 顆：黃。7 組完整的有 7 × 2＝14 顆藍色，多出來的第 29、30 顆是紅、黃，沒有藍。'},
+
+{id: 'F03', title: '積木樓梯', concept: '找規律（累加）',
+ body: `<p>河狸用積木搭樓梯。第 1 個樓梯有 1 層，第 2 個有 2 層，第 3 個有 3 層……每往下一層就多 1 塊。</p>
+ ${svg(640, 200, `
+  <g fill="var(--wood-tint)" stroke="var(--wood)" stroke-width="2.5">
+   <rect x="40" y="122" width="28" height="28" rx="3"/>
+   <rect x="150" y="122" width="28" height="28" rx="3"/><rect x="178" y="122" width="28" height="28" rx="3"/><rect x="150" y="94" width="28" height="28" rx="3"/>
+   <rect x="300" y="122" width="28" height="28" rx="3"/><rect x="328" y="122" width="28" height="28" rx="3"/><rect x="356" y="122" width="28" height="28" rx="3"/>
+   <rect x="300" y="94" width="28" height="28" rx="3"/><rect x="328" y="94" width="28" height="28" rx="3"/><rect x="300" y="66" width="28" height="28" rx="3"/>
+  </g>
+  <line x1="20" y1="151" x2="420" y2="151" stroke="var(--soft)" stroke-width="2"/>
+  <g font-size="15" text-anchor="middle" fill="var(--ink)"><text x="54" y="182">第 1 個：1 塊</text><text x="178" y="182">第 2 個：3 塊</text><text x="342" y="182">第 3 個：6 塊</text></g>
+  <text x="480" y="120" font-size="26" fill="var(--soft)">…</text>
+  ${bv(520, 60, 100)}`, '積木樓梯：1 塊、3 塊、6 塊')}`,
+ ask: '第 10 個樓梯共要幾塊積木？',
+ fields: [{t: 'num', ans: 55, post: '塊'}],
+ hint: '第 10 個樓梯，由上到下每層各是幾塊？',
+ explain: '<b>答案：55 塊。</b>第 10 個樓梯有 10 層，由上到下是 1、2、3、……、10 塊。1＋2＋…＋10 可以頭尾配對：1＋10、2＋9、……共 5 對，每對都是 11，5 × 11＝55。'},
+
+{id: 'F04', title: '轉轉箭頭', concept: '找規律（兩種循環）',
+ body: `<p>箭頭每次<b>順時針轉 90 度</b>，顏色依照<b>紅、藍、綠</b>輪流。</p>
+ ${svg(620, 150, [0, 90, 180, 270, 0].map((d, i) => `<rect x="${20 + i * 120}" y="10" width="100" height="100" rx="12" fill="var(--paper)" stroke="var(--line)" stroke-width="2"/><path transform="translate(${70 + i * 120} 60) rotate(${d})" d="M0 -34 L24 -6 H9 V32 H-9 V-6 H-24Z" fill="var(--${['red', 'blue', 'green', 'red', 'blue'][i]})" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><text x="${70 + i * 120}" y="136" text-anchor="middle" font-size="15" fill="var(--ink)">第 ${i + 1} 個</text>`).join(''), '箭頭：上紅、右藍、下綠、左紅、上藍')}`,
+ ask: '第 10 個箭頭朝哪個方向？是什麼顏色？',
+ fields: [{t: 'select', pre: '方向：', opts: ['上', '右', '下', '左'], ans: '右'}, {t: 'select', pre: '顏色：', opts: ['紅', '藍', '綠'], ans: '紅'}],
+ hint: '方向和顏色分開算。方向幾個一循環？顏色幾個一循環？',
+ explain: '<b>答案：朝右、紅色。</b>方向每 4 個一循環（上右下左），10 ÷ 4＝2 餘 2，和第 2 個一樣朝右。顏色每 3 個一循環（紅藍綠），10 ÷ 3＝3 餘 1，和第 1 個一樣是紅色。'},
+
+{id: 'F05', title: '圍成一圈的河狸', concept: '找規律（反推）',
+ body: `<p>河狸們圍成空心的正方形。每邊 2 隻時共 4 隻，每邊 3 隻時共 8 隻，每邊 4 隻時共 12 隻。</p>
+ ${svg(640, 190, (() => {
+   let s = '';
+   [[2, 60], [3, 210], [4, 390]].forEach(([n, x0]) => {
+     for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (r === 0 || c === 0 || r === n - 1 || c === n - 1) s += bv(x0 + c * 32 - 12, 40 + r * 32 - 12, 26);
+   });
+   return s + `<g font-size="15" text-anchor="middle" fill="var(--ink)"><text x="76" y="178">每邊 2 隻：4 隻</text><text x="242" y="178">每邊 3 隻：8 隻</text><text x="438" y="178">每邊 4 隻：12 隻</text></g><text x="570" y="100" font-size="26" fill="var(--soft)">…</text>`;
+ })(), '河狸圍成空心正方形：每邊 2、3、4 隻')}`,
+ ask: '如果這一圈共有 60 隻河狸，每邊有幾隻？',
+ fields: [{t: 'num', pre: '每邊', post: '隻', ans: 16}],
+ hint: '四個角上的河狸，同時屬於兩條邊。',
+ explain: '<b>答案：每邊 16 隻。</b>每邊 n 隻時，4 條邊共 4 × n 隻，但 4 個角的河狸都被算了兩次，要減 4：總數＝4 × n − 4。檢查：每邊 4 隻時 16 − 4＝12 ✓。4 × n − 4＝60，所以 4 × n＝64，n＝16。'},
+
+/* ===== G 最佳方案 ===== */
+{id: 'G01', title: '小船載木頭', concept: '最佳化（裝箱）',
+ body: `<p>河狸的小船最多只能載 <b>10 公斤</b>。岸邊有 4 根木頭，河狸想載得越重越好，但不能超過 10 公斤。</p>
+ ${svg(640, 220, `
+  <path d="M20 190 Q60 178 100 190 T180 190 T260 190 T340 190" stroke="var(--pond)" stroke-width="3" fill="none"/>
+  <path d="M30 120 H330 L290 172 H70Z" fill="var(--wood)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+  <text x="180" y="154" text-anchor="middle" font-size="16" font-weight="700" fill="var(--paper)">最多 10 公斤</text>
+  ${bv(135, 30, 90)}
+  ${[[6, 30], [5, 78], [4, 126], [3, 174]].map(([k, y]) => `<rect x="400" y="${y}" width="${k * 25}" height="28" rx="14" fill="#d79b62" stroke="#3a2a1f" stroke-width="2.5"/><ellipse cx="${400 + k * 25 - 8}" cy="${y + 14}" rx="6" ry="11" fill="#f0c99a" stroke="#3a2a1f" stroke-width="2"/><text x="${410 + k * 25}" y="${y + 20}" font-size="16" fill="var(--ink)">${k} 公斤</text>`).join('')}`, '小船最多載 10 公斤；木頭 6、5、4、3 公斤')}`,
+ ask: '要選哪幾根木頭？',
+ fields: [{t: 'multi', opts: ['6 公斤', '5 公斤', '4 公斤', '3 公斤'], ans: ['6 公斤', '4 公斤']}],
+ hint: '有沒有剛好 10 公斤的組合？',
+ explain: '<b>答案：6 公斤和 4 公斤。</b>剛好 10 公斤，不可能更重了。其他組合：6＋5、5＋4＋3 都超重；5＋4＝9、6＋3＝9、5＋3＝8 都不到 10。'},
+
+{id: 'G02', title: '最少的硬幣', concept: '貪婪法',
+ body: `<p>河狸要付 <b>37 元</b>，錢包裡有很多 20 元、10 元、5 元、1 元的硬幣。</p>
+ ${svg(520, 120, `
+  <g fill="var(--sun)" fill-opacity=".3" stroke="var(--sun)" stroke-width="3"><circle cx="70" cy="60" r="48"/><circle cx="190" cy="60" r="42"/><circle cx="300" cy="60" r="36"/><circle cx="400" cy="60" r="28"/></g>
+  <g font-size="24" font-weight="700" text-anchor="middle" fill="var(--ink)"><text x="70" y="69">20</text><text x="190" y="69">10</text><text x="300" y="69">5</text><text x="400" y="69">1</text></g>`, '20 元、10 元、5 元、1 元硬幣')}`,
+ ask: '最少需要幾枚硬幣？',
+ fields: [{t: 'num', pre: '最少', post: '枚', ans: 5}],
+ hint: '先用最大的硬幣，看看還剩多少錢。',
+ explain: '<b>答案：5 枚。</b>20＋10＋5＋1＋1＝37。每次先拿最大的面額（貪婪法），用這套硬幣剛好能得到最少枚數。可以和「河狸國的硬幣」那題比較：換一套硬幣，同樣的方法就不一定最好了。'},
+
+{id: 'G03', title: '河狸國的硬幣', concept: '貪婪法的限制',
+ body: `<p>河狸國只有 1 元、3 元、4 元三種硬幣。店長找錢的習慣是：<b>每次先拿面額最大、又不會超過的硬幣</b>。</p>
+ ${svg(420, 130, `
+  <g fill="var(--sun)" fill-opacity=".3" stroke="var(--sun)" stroke-width="3"><circle cx="70" cy="62" r="38"/><circle cx="200" cy="62" r="46"/><circle cx="340" cy="62" r="52"/></g>
+  <g font-size="26" font-weight="700" text-anchor="middle" fill="var(--ink)"><text x="70" y="72">1</text><text x="200" y="72">3</text><text x="340" y="72">4</text></g>`, '1 元、3 元、4 元硬幣')}`,
+ ask: '要找 6 元時，最少需要幾枚硬幣？店長的方法能找到最少的枚數嗎？',
+ fields: [{t: 'num', pre: '最少', post: '枚', ans: 2}, {t: 'radio', opts: ['店長的方法能', '店長的方法不能'], ans: '店長的方法不能'}],
+ hint: '店長的方法真的最少嗎？試試別的組合。',
+ explain: '<b>答案：最少 2 枚，店長的方法不能。</b>店長先拿 4 元，再拿 1 元、1 元，共 3 枚；但 3 元＋3 元只要 2 枚。每一步都選眼前最好的（貪婪法）很快，但不一定得到整體最好的結果。'},
+
+{id: 'G04', title: '排隊裝水', concept: '最佳化（排程）',
+ body: `<p>4 隻河狸要用<b>同一個</b>水龍頭裝水，一次只能一隻裝。每隻河狸「從大家開始排隊，到自己裝完」的時間，叫做牠的等待時間。</p>
+ ${svg(640, 200, `
+  <rect x="20" y="40" width="64" height="22" rx="6" fill="var(--soft)"/><rect x="62" y="62" width="16" height="26" fill="var(--soft)"/>
+  <path d="M70 98 Q76 110 70 116 Q64 110 70 98Z" fill="var(--pond)"/>
+  ${bv(100, 60, 90)}${bv(230, 60, 90)}${bv(360, 60, 90)}${bv(490, 60, 90)}
+  <g font-size="16" text-anchor="middle" fill="var(--ink)"><text x="145" y="176">阿土 6 分鐘</text><text x="275" y="176">小美 2 分鐘</text><text x="405" y="176">大寶 4 分鐘</text><text x="535" y="176">小石 1 分鐘</text></g>`, '四隻河狸裝水分別要 6、2、4、1 分鐘')}`,
+ ask: '可以重新安排順序。4 隻河狸的等待時間加起來，最少是幾分鐘？',
+ fields: [{t: 'num', pre: '最少', post: '分鐘', ans: 24}],
+ hint: '排在前面的河狸花的時間，後面每一隻都要跟著等。誰應該先裝？',
+ explain: '<b>答案：24 分鐘。</b>讓花時間少的先裝：1、2、4、6 分鐘。每隻裝完的時間是 1、3、7、13 分鐘，加起來 24。如果照原本的順序（6、2、4、1），是 6＋8＋12＋13＝39。'},
+
+{id: 'G05', title: '煎鬆餅', concept: '最佳化（不浪費空位）',
+ body: `<p>平底鍋一次最多放 <b>2 片</b>鬆餅。每片鬆餅的<b>正面和反面都要各煎 1 分鐘</b>。河狸要煎好 A、B、C 三片鬆餅。</p>
+ ${svg(600, 200, `
+  <rect x="245" y="92" width="120" height="16" rx="8" fill="var(--soft)"/>
+  <circle cx="170" cy="100" r="82" fill="var(--line)" stroke="var(--ink)" stroke-width="4"/>
+  <circle cx="130" cy="100" r="32" fill="none" stroke="var(--soft)" stroke-width="2" stroke-dasharray="6 5"/><circle cx="210" cy="100" r="32" fill="none" stroke="var(--soft)" stroke-width="2" stroke-dasharray="6 5"/>
+  <g fill="#f2c27b" stroke="#a8663a" stroke-width="3"><circle cx="430" cy="60" r="34"/><circle cx="520" cy="60" r="34"/><circle cx="475" cy="140" r="34"/></g>
+  <g font-size="22" font-weight="700" text-anchor="middle" fill="#3a2a1f"><text x="430" y="68">A</text><text x="520" y="68">B</text><text x="475" y="148">C</text></g>`, '一次放兩片的平底鍋，以及 A、B、C 三片鬆餅')}`,
+ ask: '煎好三片鬆餅，最少要幾分鐘？',
+ fields: [{t: 'num', pre: '最少', post: '分鐘', ans: 3}],
+ hint: '一片煎完正面後，一定要馬上煎反面嗎？讓鍋子每一分鐘都放滿 2 片。',
+ explain: '<b>答案：3 分鐘。</b>第 1 分鐘：煎 A 和 B 的正面。第 2 分鐘：煎 A 的反面和 C 的正面（B 先拿起來）。第 3 分鐘：煎 B 和 C 的反面。3 片共 6 面，鍋子每分鐘能煎 2 面，最少就是 3 分鐘。關鍵是不讓鍋子有空位。'},
+
+/* ===== H 偵錯與密碼 ===== */
+{id: 'H01', title: '字母往後跳一格', concept: '加密（凱撒密碼）',
+ body: `<p>河狸把英文單字加密：每個字母都換成字母表中的<b>下一個</b>字母（Z 換成 A）。例如 HI 加密後變成 IJ。</p>
+ <div class="abc">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z</div>`,
+ ask: '河狸收到加密後的「DBU」，原本的單字是什麼？',
+ fields: [{t: 'text', pre: '原本是：', ph: '英文字母', ans: 'CAT'}],
+ hint: '解密時要反過來，每個字母往前退一格。',
+ explain: '<b>答案：CAT。</b>加密是每個字母往後跳一格，解密就往前退一格：D→C、B→A、U→T。這叫「凱撒密碼」，往後跳幾格就是它的「鑰匙」。'},
+
+{id: 'H02', title: '補上檢查卡', concept: '錯誤偵測（同位元）',
+ body: `<p>魔術師規定：每一列的黑卡都要是<b>偶數張</b>（0 張也算偶數）。所以每列最後要補一張「檢查卡」，讓黑卡數變成偶數。</p>
+ ${svg(520, 200, (() => {
+   const rows = ['1010', '1110', '0000'];
+   let s = `<text x="335" y="22" text-anchor="middle" font-size="14" fill="var(--soft)">檢查卡</text>`;
+   rows.forEach((r, i) => {
+     const y = 32 + i * 56;
+     s += `<text x="78" y="${y + 30}" text-anchor="end" font-size="15" fill="var(--soft)">第 ${i + 1} 列</text>`;
+     [...r].forEach((c, j) => s += `<rect x="${92 + j * 52}" y="${y}" width="40" height="46" rx="6" fill="${c === '1' ? 'var(--px-on)' : 'var(--px-off)'}" stroke="var(--soft)" stroke-width="2"/>`);
+     s += `<rect x="315" y="${y}" width="40" height="46" rx="6" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="2" stroke-dasharray="5 4"/><text x="335" y="${y + 31}" text-anchor="middle" font-size="20" font-weight="700" fill="var(--accent-ink)">?</text>`;
+   });
+   return s;
+ })(), '三列卡片：黑白黑白、黑黑黑白、白白白白，最後一張待補')}`,
+ ask: '每一列的檢查卡應該是什麼顏色？',
+ fields: [{t: 'select', pre: '第 1 列：', opts: ['黑', '白'], ans: '白'}, {t: 'select', pre: '第 2 列：', opts: ['黑', '白'], ans: '黑'}, {t: 'select', pre: '第 3 列：', opts: ['黑', '白'], ans: '白'}],
+ hint: '先數每一列現在有幾張黑卡，是單數還是偶數？',
+ explain: '<b>答案：第 1 列白、第 2 列黑、第 3 列白。</b>第 1 列已經有 2 張黑卡（偶數），補白卡；第 2 列有 3 張（單數），補黑卡變成 4 張；第 3 列 0 張，補白卡。電腦傳資料時也會加上這種「檢查位元」，用來發現資料被弄錯了。'},
+
+{id: 'H03', title: '被翻錯的卡片', concept: '錯誤偵測（同位元）',
+ body: `<p>魔術師排好的方陣，<b>每一橫列、每一直行的黑卡都是偶數張</b>（0 張也算偶數）。觀眾偷偷把<b>一張</b>卡片翻面，變成下面這樣。</p>`,
+ ask: '請點選被翻面的那張卡片。',
+ fields: [{t: 'pick', grid: [[1, 0, 1, 1, 1], [0, 1, 1, 0, 0], [1, 0, 0, 1, 1], [0, 0, 1, 0, 1], [0, 0, 1, 0, 1]], ans: [3, 2]}],
+ hint: '每一列、每一行各數一次黑卡，哪裡變成單數？',
+ explain: '<b>答案：第 3 列、第 2 行。</b>數每列、每行的黑卡：只有第 3 列（3 張）和第 2 行（1 張）是單數，兩者交叉的那張就是被翻的卡片。電腦傳送資料也用這種「同位元檢查」找錯。'},
+
+{id: 'H04', title: '書號檢查碼', concept: '錯誤偵測（檢查碼）',
+ body: `<p>河狸圖書館的書號有 4 個數字，最後一個是<b>檢查碼</b>：把前三個數字加起來，取<b>個位數</b>。例如 2350：2＋3＋5＝10，個位數是 0 ✓。</p>
+ ${svg(600, 180, [['2350', 'red'], ['4127', 'blue'], ['6318', 'green'], ['8109', 'yellow']].map(([n, c], i) => `<rect x="${20 + i * 145}" y="14" width="125" height="150" rx="10" fill="var(--${c})" fill-opacity=".22" stroke="var(--ink)" stroke-width="3"/><rect x="${20 + i * 145}" y="14" width="18" height="150" rx="6" fill="var(--${c})" stroke="var(--ink)" stroke-width="3"/><text x="${90 + i * 145}" y="100" text-anchor="middle" font-size="28" font-weight="700" fill="var(--ink)" font-family="ui-monospace,Menlo,monospace">${n}</text>`).join(''), '四本書：2350、4127、6318、8109')}`,
+ ask: '哪一本書的書號一定有錯？如果有人把 2350 抄成 3250，檢查碼能發現嗎？',
+ fields: [{t: 'radio', label: '有錯的是：', opts: ['2350', '4127', '6318', '8109'], ans: '6318'}, {t: 'radio', label: '抄成 3250：', opts: ['能發現', '不能發現'], ans: '不能發現'}],
+ hint: '每本都算一次前三個數字的和。把兩個數字對調，加起來的和會改變嗎？',
+ explain: '<b>答案：6318 有錯；抄成 3250 不能發現。</b>6＋3＋1＝10，個位數應該是 0，不是 8。其他：2＋3＋5＝10→0 ✓、4＋1＋2＝7 ✓、8＋1＋0＝9 ✓。把 2350 抄成 3250，加起來還是 10，檢查碼一樣是 0，所以抓不到。真正的書號（ISBN）會把每一位乘上不同的數再加起來，就能抓到這種對調的錯誤。'},
+
+{id: 'H05', title: '鋸齒密碼', concept: '加密（重新排列）',
+ body: `<p>河狸用「鋸齒法」加密：把句子的字輪流寫在上排和下排（第 1、3、5…個字在上排，第 2、4、6…個字在下排），再把<b>上排接著下排</b>寫成密碼。</p>
+ ${svg(640, 170, (() => {
+   const ch = '河狸明天去湖邊';
+   const pts = [...ch].map((c, i) => [40 + i * 58, i % 2 ? 125 : 45]);
+   return `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="var(--accent)" stroke-width="3" stroke-dasharray="6 5"/>` +
+     pts.map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="22" fill="var(--paper)" stroke="var(--accent)" stroke-width="2"/><text x="${x}" y="${y + 8}" text-anchor="middle" font-size="22" font-weight="700" fill="var(--ink)">${ch[i]}</text>`).join('') +
+     `<g font-size="15" fill="var(--ink)"><text x="450" y="52">上排：河明去邊</text><text x="450" y="90">下排：狸天湖</text><text x="450" y="128" font-weight="700">密碼：河明去邊狸天湖</text></g>`;
+ })(), '範例：河狸明天去湖邊，加密成河明去邊狸天湖')}`,
+ ask: '河狸收到密碼「今在樹見晚大下面」，原本的句子是什麼？',
+ fields: [{t: 'text', pre: '原本是：', ph: '寫出原本的句子', ans: '今晚在大樹下見面'}],
+ hint: '密碼有 8 個字。上排會有幾個字？下排會有幾個字？',
+ explain: '<b>答案：今晚在大樹下見面。</b>8 個字的句子，上排是第 1、3、5、7 個字（4 個），下排是第 2、4、6、8 個字（也是 4 個）。所以密碼前 4 個字「今在樹見」是上排，後 4 個字「晚大下面」是下排，再上下輪流讀：今晚在大樹下見面。'},
+
+/* ===== I 程式與指令 ===== */
+{id: 'I01', title: '機器人找點心', concept: '程式（依序執行）',
+ body: `<p>機器人在左下角的起點，<b>面向北方</b>（上方）。它依序執行這些指令：</p>
+ ${steps(['前進 2 格', '右轉', '前進 3 格'])}
+ ${svg(520, 290, `
+  <g stroke="var(--line)" stroke-width="2"><path d="M40 20V260M100 20V260M160 20V260M220 20V260M280 20V260M40 20H280M40 80H280M40 140H280M40 200H280M40 260H280"/></g>
+  <g font-size="32" text-anchor="middle"><text x="250" y="121">🍎</text><text x="190" y="61">🥕</text><text x="250" y="181">🐟</text><text x="130" y="241">🍃</text></g>
+  <rect x="52" y="212" width="36" height="36" rx="8" fill="var(--pond-tint)" stroke="var(--pond)" stroke-width="2.5"/>
+  <path d="M59 241 L70 219 L81 241Z" fill="var(--pond)"/>
+  <text x="70" y="282" font-size="14" text-anchor="middle" fill="var(--ink)">起點</text>
+  <g stroke="var(--soft)" stroke-width="2"><path d="M420 140V90M420 140H470M420 140V190M420 140H370"/></g>
+  <g font-size="17" font-weight="700" fill="var(--ink)" text-anchor="middle"><text x="420" y="80">北</text><text x="486" y="146">東</text><text x="420" y="212">南</text><text x="354" y="146">西</text></g>`, '4 乘 4 的方格，有蘋果、胡蘿蔔、魚、葉子，機器人在左下角面向北')}`,
+ ask: '機器人最後停在哪一個點心上？',
+ fields: [{t: 'radio', opts: ['蘋果', '胡蘿蔔', '魚', '葉子'], ans: '蘋果'}],
+ hint: '起點那一格不算在「前進」的格數裡。右轉之後，機器人面向哪裡？',
+ explain: '<b>答案：蘋果。</b>從起點往北前進 2 格，右轉後面向東，再往東前進 3 格，就到了蘋果。如果把起點那格也算進去，會誤停在魚上。'},
+
+{id: 'I02', title: '木頭分類機', concept: '條件判斷（如果……否則……）',
+ body: `<p>分類機用這些規則把木頭放進三個箱子。<b>從第 1 條開始檢查，符合了就放進去，不再往下看。</b></p>
+ <div class="rulebox"><ol><li>如果木頭比 5 公分長 → 放進<b>左箱</b></li><li>否則，如果木頭是彎的 → 放進<b>中箱</b></li><li>都不是 → 放進<b>右箱</b></li></ol></div>
+ ${svg(560, 280, [[7, 0], [3, 1], [6, 1], [2, 0], [4, 0]].map(([L, bent], i) => {
+   const y = 34 + i * 52, w = L * 26;
+   const log = bent ? `<path d="M40 ${y + 8} Q ${40 + w / 2} ${y - 26} ${40 + w} ${y + 8}" stroke="#3a2a1f" stroke-width="25" stroke-linecap="round" fill="none"/><path d="M40 ${y + 8} Q ${40 + w / 2} ${y - 26} ${40 + w} ${y + 8}" stroke="#d79b62" stroke-width="19" stroke-linecap="round" fill="none"/>`
+     : `<rect x="34" y="${y - 11}" width="${w + 12}" height="22" rx="11" fill="#d79b62" stroke="#3a2a1f" stroke-width="2.5"/>`;
+   return log + `<text x="260" y="${y + 6}" font-size="16" fill="var(--ink)">${'①②③④⑤'[i]} ${L} 公分，${bent ? '彎的' : '直的'}</text>`;
+ }).join(''), '五根木頭：7 公分直、3 公分彎、6 公分彎、2 公分直、4 公分直')}`,
+ ask: '三個箱子各會放進幾根木頭？',
+ fields: [{t: 'num', pre: '左箱', post: '根', ans: 2}, {t: 'num', pre: '中箱', post: '根', ans: 1}, {t: 'num', pre: '右箱', post: '根', ans: 2}],
+ hint: '6 公分、彎的那根，檢查第 1 條規則時就符合了嗎？',
+ explain: '<b>答案：左箱 2 根、中箱 1 根、右箱 2 根。</b>規則從第 1 條開始看，符合就停。7 公分和 6 公分都比 5 公分長，放左箱（6 公分那根雖然是彎的，也不會再看第 2 條）。3 公分彎的放中箱。2 公分和 4 公分直的放右箱。規則的先後順序會影響結果。'},
+
+{id: 'I03', title: '爬樓梯的機器人', concept: '迴圈',
+ body: `<p>機器人一開始面向北方，把這組指令<b>重複 3 次</b>：</p>
+ <div class="blocks"><div class="blk loop">重複 3 次<div class="inner"><div class="blk">前進 1 格</div><div class="blk">右轉</div><div class="blk">前進 1 格</div><div class="blk">左轉</div></div></div></div>
+ ${robotGrid}`,
+ ask: '執行完後，機器人在起點往東幾格、往北幾格？面向哪個方向？',
+ fields: [{t: 'num', pre: '往東', post: '格', ans: 3}, {t: 'num', pre: '往北', post: '格', ans: 3}, {t: 'select', pre: '面向', opts: ['北', '東', '南', '西'], ans: '北'}],
+ hint: '先想清楚做「一次」指令後，機器人在哪、面向哪。',
+ explain: '<b>答案：往東 3 格、往北 3 格，面向北方。</b>做一次指令：往北 1 格、往東 1 格，最後又轉回面北。每次的效果都一樣，重複 3 次就是東 3、北 3，像在爬樓梯。重複 10 次就是東 10、北 10。'},
+
+{id: 'I04', title: '河狸存錢筒', concept: '迴圈與變數',
+ body: `<p>河狸的存錢筒一開始有 <b>3 元</b>。執行下面的程式：</p>
+ <div class="blocks"><div class="blk loop">重複 4 次<div class="inner"><div class="blk">存錢筒的錢變成 2 倍</div><div class="blk">拿走 1 元</div></div></div></div>`,
+ ask: '程式執行完，存錢筒裡有幾元？',
+ fields: [{t: 'num', ans: 33, post: '元'}],
+ hint: '把每做完一次之後的錢記下來。',
+ explain: '<b>答案：33 元。</b>3 → 3 × 2 − 1＝5 → 5 × 2 − 1＝9 → 9 × 2 − 1＝17 → 17 × 2 − 1＝33。程式裡會改變的數叫「變數」，把每一圈後的值記下來，就不會漏算。'},
+
+{id: 'I05', title: '迴圈裡的迴圈', concept: '巢狀迴圈',
+ body: `<p>機器人一開始<b>面向北方</b>，執行下面的程式（裡面的迴圈做完，才接著做「右轉」）：</p>
+ <div class="blocks"><div class="blk loop">重複 3 次<div class="inner"><div class="blk loop">重複 2 次<div class="inner"><div class="blk">前進 1 格</div></div></div><div class="blk">右轉</div></div></div></div>
+ ${robotGrid}`,
+ ask: '執行完後，機器人在起點往東幾格、往北幾格？面向哪個方向？',
+ fields: [{t: 'num', pre: '往東', post: '格', ans: 2}, {t: 'num', pre: '往北', post: '格', ans: 0}, {t: 'select', pre: '面向', opts: ['北', '東', '南', '西'], ans: '西'}],
+ hint: '外面的迴圈每做一次，就是「直走 2 格，再右轉」。',
+ explain: '<b>答案：往東 2 格、往北 0 格，面向西。</b>外面的迴圈每做一次，就是「直走 2 格再右轉」：第 1 次往北走 2 格，變成面向東；第 2 次往東走 2 格，變成面向南；第 3 次往南走 2 格，變成面向西。往北 2 又往南 2 抵消了，所以停在起點東邊 2 格。'},
+
+/* ===== J 搜尋與排序 ===== */
+{id: 'J01', title: '西瓜冠軍賽', concept: '搜尋（找最大值）',
+ body: `<p>河狸有 8 顆西瓜，想找出<b>最重的</b>那一顆。天平一次只能放 2 顆比較，輕的那顆就淘汰。</p>
+ ${svg(620, 110, Array.from({length: 8}, (_, i) => `<circle cx="${42 + i * 76}" cy="55" r="30" fill="#4f9a4a" stroke="#2f5f2c" stroke-width="3"/><path d="M${42 + i * 76} 26 V84 M${30 + i * 76} 29 Q${22 + i * 76} 55 ${30 + i * 76} 81 M${54 + i * 76} 29 Q${62 + i * 76} 55 ${54 + i * 76} 81" stroke="#2f5f2c" stroke-width="3" fill="none"/>`).join(''), '8 顆西瓜')}`,
+ ask: '最少要比幾次，才能找出最重的西瓜？',
+ fields: [{t: 'num', pre: '最少', post: '次', ans: 7}],
+ hint: '每比一次會淘汰幾顆？最後要剩下幾顆？',
+ explain: '<b>答案：7 次。</b>每比一次就淘汰 1 顆比較輕的。8 顆要淘汰 7 顆才剩下最重的，所以不管怎麼安排，都剛好要比 7 次。淘汰賽也是一樣：8 隊要比 7 場才能產生冠軍。'},
+
+{id: 'J02', title: '猜猜我想的數', concept: '二分搜尋',
+ body: `<p>河狸心裡想了一個 1～100 的整數。你每猜一次，牠會說「太大」、「太小」或「猜對了」。</p>
+ ${svg(600, 175, `${bv(20, 40, 120)}
+  <g stroke-width="2"><rect x="170" y="14" width="400" height="42" rx="14" fill="var(--pond-tint)" stroke="var(--pond)"/><rect x="170" y="70" width="190" height="42" rx="14" fill="var(--paper)" stroke="var(--line)"/><rect x="380" y="70" width="190" height="42" rx="14" fill="var(--paper)" stroke="var(--line)"/></g>
+  <g font-size="16" text-anchor="middle" fill="var(--ink)"><text x="370" y="41">我想了一個 1～100 的數</text><text x="265" y="97">你猜 50 →「太小！」</text><text x="475" y="97">你猜 75 →「太大！」</text></g>
+  <text x="370" y="150" text-anchor="middle" font-size="16" font-weight="700" fill="var(--accent-ink)">下一次要猜多少？</text>`, '河狸說：猜 50 太小，猜 75 太大')}`,
+ ask: '下一次猜哪一個數最聰明？',
+ fields: [{t: 'radio', opts: ['51', '62', '74', '99'], ans: '62'}],
+ hint: '答案現在一定在哪個範圍裡？猜哪個數，不管結果是什麼都能刪掉最多？',
+ explain: '<b>答案：62。</b>猜 50 太小、猜 75 太大，答案一定在 51 到 74 之間。猜中間的 62（猜 63 也可以），不管牠說太大或太小，都能刪掉一半。猜 51 或 74，運氣不好時只能刪掉一個數；99 早就不可能了。'},
+
+{id: 'J03', title: '交換排身高', concept: '排序（相鄰交換）',
+ body: `<p>四隻河狸身上的號碼代表身高順序（1 號最矮）。現在由左到右是 4、2、3、1 號。每次只能讓<b>相鄰的兩隻</b>交換位置。</p>
+ ${svg(560, 225, [[4, 30], [2, 170], [3, 290], [1, 430]].map(([n, x]) => { const s = 60 + n * 15; return bv(x + (120 - s) / 2, 172 - s, s) + `<circle cx="${x + 60}" cy="198" r="17" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="2"/><text x="${x + 60}" y="205" text-anchor="middle" font-size="18" font-weight="700" fill="var(--ink)">${n}</text>`; }).join(''), '由左到右是 4、2、3、1 號河狸')}`,
+ ask: '要排成由左到右 1、2、3、4，最少要交換幾次？',
+ fields: [{t: 'num', pre: '最少', post: '次', ans: 5}],
+ hint: '找找看有幾對河狸「高的站在矮的左邊」。交換一次相鄰的兩隻，能修好幾對？',
+ explain: '<b>答案：5 次。</b>找出站錯順序的配對：4 在 2 前面、4 在 3 前面、4 在 1 前面、2 在 1 前面、3 在 1 前面，共 5 對。每交換一次相鄰的兩隻，剛好修好 1 對，所以最少 5 次。例如：4231 → 2431 → 2341 → 2314 → 2134 → 1234。'},
+
+{id: 'J04', title: '最多猜幾次', concept: '二分搜尋（次數）',
+ body: `<p>河狸心裡想了一個 1～31 的整數。你每猜一次，牠會說「太大」、「太小」或「猜對了」。你用最聰明的方法猜。</p>
+ ${svg(440, 150, `${bv(10, 20, 120)}<rect x="150" y="40" width="270" height="56" rx="16" fill="var(--pond-tint)" stroke="var(--pond)" stroke-width="2"/><text x="285" y="76" text-anchor="middle" font-size="18" fill="var(--ink)">我想的數在 1～31 之間</text>`, '河狸想了一個 1 到 31 的數')}`,
+ ask: '不管河狸想的是哪個數，最多要猜幾次一定能猜中？',
+ fields: [{t: 'num', pre: '最多', post: '次', ans: 5}],
+ hint: '每次猜正中間。猜錯一次後，還剩下幾個數？',
+ explain: '<b>答案：5 次。</b>先猜 16，猜錯就只剩 15 個數；再猜中間，剩 7 個；接著剩 3 個、剩 1 個，第 5 次一定猜中。反過來看：猜 1 次能處理 1 個數，2 次 3 個，3 次 7 個，4 次 15 個，5 次 31 個，每多猜一次範圍大約變 2 倍。'},
+
+{id: 'J05', title: '天平找假金幣', concept: '分而治之',
+ body: `<p>8 枚外觀一樣的金幣中，有 1 枚假的比較<b>重</b>。天平沒有砝碼，只能比較左右哪邊重。</p>
+ ${svg(560, 230, `
+  <g stroke="var(--soft)" stroke-width="2" fill="none">
+   <line x1="120" y1="40" x2="440" y2="40" stroke-width="5" stroke-linecap="round"/><line x1="280" y1="40" x2="280" y2="160" stroke-width="5"/>
+   <path d="M120 40L72 104M120 40L168 104M440 40L392 104M440 40L488 104"/>
+   <path d="M62 104Q120 136 178 104Z M382 104Q440 136 498 104Z" fill="var(--pond-tint)"/>
+  </g>
+  <path d="M232 172H328L280 152Z" fill="var(--soft)"/>
+  <g fill="var(--sun)" fill-opacity=".35" stroke="var(--sun)" stroke-width="2">
+   <circle cx="70" cy="204" r="18"/><circle cx="130" cy="204" r="18"/><circle cx="190" cy="204" r="18"/><circle cx="250" cy="204" r="18"/>
+   <circle cx="310" cy="204" r="18"/><circle cx="370" cy="204" r="18"/><circle cx="430" cy="204" r="18"/><circle cx="490" cy="204" r="18"/>
+  </g>`, '天平與 8 枚金幣')}`,
+ ask: '最少要秤幾次，才能保證一定找出假金幣？',
+ fields: [{t: 'radio', opts: ['1 次', '2 次', '3 次', '4 次'], ans: '2 次'}],
+ hint: '天平有三種結果：左重、右重、一樣重。',
+ explain: '<b>答案：2 次。</b>分成 3、3、2 三組。第一次 3 對 3：重的那邊有假幣；平衡就在剩下 2 枚裡。第二次從可疑的組拿 1 對 1：重的就是；平衡就是沒放上去的那枚。每次分三組，比分兩組更快縮小範圍。'}
+];
+
+const BANK = Object.fromEntries(Q.map(q => [q.id, q]));
+const LETTERS = Object.keys(CATS);
+const SETS = {
+  easy: {name: '簡單題組', lv: 1, d: '每類的 01 題，適合第一次接觸。', codes: LETTERS.map(l => l + '01')},
+  medium: {name: '中等題組', lv: 2, d: '每類的 03 題，需要多想一步。', codes: LETTERS.map(l => l + '03')},
+  hard: {name: '挑戰題組', lv: 3, d: '每類的 05 題，給喜歡挑戰的你。', codes: LETTERS.map(l => l + '05')}
+};
+const randomCodes = () => LETTERS.map(l => l + '0' + (1 + Math.floor(Math.random() * 5)));
+
+/* ---------- 開始畫面 ---------- */
+const $ = s => document.querySelector(s);
+$('#sets').innerHTML = Object.entries(SETS).map(([k, s]) => `<button class="set-card" type="button" data-set="${k}"><span class="stars">${STAR(s.lv)}</span><b>${s.name}</b><span class="d">${s.d}</span></button>`).join('') +
+  `<button class="set-card rand" type="button" data-set="random"><span class="stars">🎲</span><b>隨機抽題</b><span class="d">每類隨機抽 1 題，難度混合，每次都不一樣。</span></button>`;
+$('#cats').innerHTML = LETTERS.map(l => `<li><span class="k">${l}</span><span>${CATS[l]}</span><span class="r">${l}01–${l}05</span></li>`).join('');
+$('#sets').addEventListener('click', e => { const b = e.target.closest('[data-set]'); if (b) startKey(b.dataset.set); });
+
+function startKey(k) {
+  if (k === 'random') startSet('隨機抽題', randomCodes());
+  else startSet(SETS[k].name, SETS[k].codes);
+}
+
+/* ---------- 題目渲染 ---------- */
+function fieldHTML(q, i, f) {
+  const id = `f-${q.id}-${i}`;
+  switch (f.t) {
+    case 'radio': return `<div class="opts" role="radiogroup">${f.label ? `<span class="flabel">${f.label}</span>` : ''}${f.opts.map(o => `<label class="chip"><input type="radio" name="${id}" value="${o}">${o}</label>`).join('')}</div>`;
+    case 'multi': return `<div class="opts">${f.opts.map(o => `<label class="chip"><input type="checkbox" name="${id}" value="${o}">${o}</label>`).join('')}</div>`;
+    case 'num': return `<label>${f.pre || ''} <input type="number" id="${id}" min="0" inputmode="numeric"> ${f.post || ''}</label>`;
+    case 'text': return `<label>${f.pre || ''} <input type="text" id="${id}" placeholder="${f.ph || ''}" autocomplete="off"></label>`;
+    case 'select': return `<label>${f.pre || ''} <select id="${id}"><option value="">請選擇</option>${f.opts.map(o => `<option>${o}</option>`).join('')}</select> ${f.post || ''}</label>`;
+    case 'pick': return `<div><div class="cards" data-pick-grid></div><span class="small" data-pick-text>尚未點選</span></div>`;
+  }
+}
+
+function toolHTML(t) {
+  if (t.t === 'paint') return `<div class="paint-row"><div class="paint" data-paint="${t.rows * t.cols}" aria-label="可塗色的 ${t.rows} 列 ${t.cols} 格"></div><div class="small">${t.side}</div></div>`;
+  if (t.t === 'scratch') return `<div class="table-wrap"><table class="scratch"><tr><th></th>${t.cols.map(c => `<th>${c}</th>`).join('')}</tr>${t.rows.map(r => `<tr><th>${r}</th>${t.cols.map(c => `<td><button type="button" aria-label="${r}、${c}">&nbsp;</button></td>`).join('')}</tr>`).join('')}</table></div>`;
+  return '';
+}
+
+function renderQ(q, n) {
+  const sec = document.createElement('section');
+  sec.className = 'q'; sec.id = 'q-' + q.id; sec.dataset.id = q.id;
+  sec.innerHTML = `
+    <div class="q-title"><span class="code">${q.id}</span><h2>${q.title}</h2><span class="stars" aria-label="難度 ${LV(q.id)} 顆星">${STAR(LV(q.id))}</span></div>
+    <p class="q-meta">第 ${n} 題｜${q.id[0]} ${CATS[q.id[0]]}｜概念：${q.concept}</p>
+    ${q.body}
+    ${q.tool ? toolHTML(q.tool) : ''}
+    <p class="ask">${q.ask}</p>
+    <div class="answer">${q.fields.map((f, i) => fieldHTML(q, i, f)).join('')}</div>
+    <div class="actions"><button type="button" data-check>檢查答案</button><button type="button" class="ghost" data-reveal disabled>看解答</button></div>
+    <div class="fb" role="status"></div>
+    <div class="explain">${q.explain}</div>`;
+
+  sec.querySelectorAll('[data-paint]').forEach(p => {
+    for (let i = 0; i < Number(p.dataset.paint); i++) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.setAttribute('aria-pressed', 'false');
+      b.setAttribute('aria-label', `第 ${Math.floor(i / 7) + 1} 列第 ${i % 7 + 1} 格`);
+      b.addEventListener('click', () => b.setAttribute('aria-pressed', b.classList.toggle('on')));
+      p.appendChild(b);
+    }
+  });
+  sec.querySelectorAll('.scratch button').forEach(b => b.addEventListener('click', () => {
+    const seq = [' ', '✗', '○'];
+    b.textContent = seq[(seq.indexOf(b.textContent) + 1) % 3];
+  }));
+  const pf = q.fields.find(f => f.t === 'pick');
+  if (pf) {
+    const box = sec.querySelector('[data-pick-grid]'), txt = sec.querySelector('[data-pick-text]');
+    const lbl = t => Object.assign(document.createElement('span'), {className: 'lbl', textContent: t});
+    box.appendChild(lbl(''));
+    for (let c = 1; c <= pf.grid[0].length; c++) box.appendChild(lbl(`第${c}行`));
+    pf.grid.forEach((row, r) => {
+      box.appendChild(lbl(`第${r + 1}列`));
+      row.forEach((v, c) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'card' + (v ? ' black' : '');
+        b.setAttribute('aria-label', `第 ${r + 1} 列第 ${c + 1} 行，${v ? '黑卡' : '白卡'}`);
+        b.addEventListener('click', () => {
+          if (run.st[q.id].done) return;
+          box.querySelectorAll('.pick').forEach(x => x.classList.remove('pick'));
+          b.classList.add('pick');
+          sec.dataset.pick = `${r + 1},${c + 1}`;
+          txt.textContent = `已點選：第 ${r + 1} 列、第 ${c + 1} 行`;
+        });
+        box.appendChild(b);
+      });
+    });
+  }
+  return sec;
+}
+
+/* ---------- 判分 ---------- */
+const norm = (s, strip = '') => {
+  let t = String(s).replace(/[\s,，、。．.\-→>＞~～\/;；:：「」『』"'()（）]/g, '');
+  if (strip) t = [...t].filter(c => !strip.includes(c)).join('');
+  return t.toUpperCase();
+};
+function readField(sec, q, i, f) {
+  const id = `f-${q.id}-${i}`;
+  if (f.t === 'radio') return (sec.querySelector(`input[name="${id}"]:checked`) || {}).value || '';
+  if (f.t === 'multi') return [...sec.querySelectorAll(`input[name="${id}"]:checked`)].map(x => x.value);
+  if (f.t === 'pick') return sec.dataset.pick || '';
+  return document.getElementById(id).value.trim();
+}
+function match(f, v) {
+  switch (f.t) {
+    case 'num': return Number(v) === f.ans;
+    case 'multi': return [...v].sort().join('|') === [...f.ans].sort().join('|');
+    case 'text': return [].concat(f.ans).some(a => norm(v, f.strip) === norm(a, f.strip));
+    case 'pick': return v === f.ans.join(',');
+    default: return v === String(f.ans);
+  }
+}
+function checkQ(sec, q) {
+  const vals = q.fields.map((f, i) => readField(sec, q, i, f));
+  if (vals.some(v => Array.isArray(v) ? v.length === 0 : v === '')) return null;
+  return q.fields.every((f, i) => match(f, vals[i]));
+}
+
+/* ---------- 作答流程 ---------- */
+let run = null;
+const face = k => `<svg viewBox="0 0 120 120" aria-hidden="true"><use href="#bv${k}"/></svg>`;
+
+/* 作答進度存在這個分頁的 sessionStorage：老師發布新版本、頁面重新載入時，已檢查過的題目不會不見 */
+const RUN_KEY = 'beaver-run';
+const saveRun = () => { try { sessionStorage.setItem(RUN_KEY, JSON.stringify(run)); } catch (e) {} };
+const clearRun = () => { try { sessionStorage.removeItem(RUN_KEY); } catch (e) {} };
+const loadRun = () => { try { return JSON.parse(sessionStorage.getItem(RUN_KEY)); } catch (e) { return null; } };
+
+function startSet(name, codes, saved) {
+  run = {name, codes, st: {}};
+  codes.forEach(c => run.st[c] = {tries: 0, done: false, pts: 0});
+  $('#home').hidden = true; $('#quizView').hidden = false; $('#bar').hidden = false;
+  $('#quizTitle').textContent = name; $('#setTag').textContent = name;
+  const box = $('#quiz'); box.innerHTML = '';
+  codes.forEach((c, i) => box.appendChild(renderQ(BANK[c], i + 1)));
+  $('#dam').innerHTML = codes.map(c => `<span class="log" title="${c}"></span>`).join('');
+  if (saved) codes.forEach(c => {
+    const s = saved[c];
+    if (!s) return;
+    const sec = document.getElementById('q-' + c);
+    run.st[c] = {tries: s.tries || 0, done: !!s.done, pts: s.pts || 0};
+    if (s.done) {
+      sec.classList.add(s.pts ? 'correct' : 'revealed');
+      const fb = sec.querySelector('.fb');
+      fb.className = 'fb show ' + (s.pts ? 'ok' : 'no');
+      fb.innerHTML = face(s.pts ? '-happy' : '-oops') + `<span>這題已經完成，得 ${s.pts} 分。</span>`;
+      sec.querySelector('.explain').classList.add('show');
+      lock(sec);
+    } else if (s.tries >= 2) sec.querySelector('[data-reveal]').disabled = false;
+  });
+  render();
+  window.scrollTo(0, 0);
+}
+
+function goHome() {
+  clearRun();
+  run = null;
+  $('#home').hidden = false; $('#quizView').hidden = true; $('#bar').hidden = true;
+  window.scrollTo(0, 0);
+}
+
+function render() {
+  let score = 0, finished = 0;
+  run.codes.forEach((c, i) => {
+    const s = run.st[c];
+    score += s.pts;
+    $('#dam').children[i].className = 'log' + (s.done ? (s.pts === 10 ? ' full' : s.pts === 5 ? ' half' : ' miss') : '');
+    if (s.done) finished++;
+  });
+  $('#score').textContent = score;
+  saveRun();
+  const fin = $('#final');
+  fin.hidden = finished !== run.codes.length;
+  if (!fin.hidden) {
+    const full = run.codes.filter(c => run.st[c].pts === 10).length;
+    $('#finalTitle').textContent = score >= 90 ? '水壩蓋好了，太厲害了！' : score >= 60 ? '挑戰完成，表現不錯！' : '挑戰完成，再試一次會更好！';
+    $('#finalText').textContent = `${run.name}總分 ${score} 分，其中 ${full} 題第一次就答對。`;
+    $('#resultList').innerHTML = run.codes.map(c => `<li class="r${run.st[c].pts}">${c} ${run.st[c].pts === 10 ? '✓' : run.st[c].pts === 5 ? '△' : '✗'} ${run.st[c].pts} 分</li>`).join('');
+  }
+}
+
+function lock(sec) {
+  sec.querySelectorAll('.answer input,.answer select,.answer button,[data-check],[data-reveal],.paint button').forEach(el => el.disabled = true);
+}
+
+$('#quiz').addEventListener('click', e => {
+  const btn = e.target.closest('[data-check],[data-reveal]');
+  if (!btn) return;
+  const sec = btn.closest('.q'), q = BANK[sec.dataset.id], s = run.st[q.id], fb = sec.querySelector('.fb');
+  if (s.done) return;
+  if (btn.hasAttribute('data-reveal')) {
+    s.done = true; s.pts = 0;
+    fb.className = 'fb show no';
+    fb.innerHTML = face('-oops') + '<span>這題看了解答，不計分。看完想一想解題的方法吧！</span>';
+    sec.classList.add('revealed');
+    sec.querySelector('.explain').classList.add('show');
+    lock(sec); render(); return;
+  }
+  const res = checkQ(sec, q);
+  fb.className = 'fb show';
+  if (res === null) { fb.classList.add('no'); fb.innerHTML = face('') + '<span>還有答案沒填完，請把每一格都填好再檢查。</span>'; return; }
+  s.tries++;
+  if (res) {
+    s.done = true; s.pts = s.tries === 1 ? 10 : 5;
+    fb.classList.add('ok');
+    fb.innerHTML = face('-happy') + `<span>${s.tries === 1 ? '答對了！得 10 分。' : '答對了！再試一次成功，得 5 分。'}</span>`;
+    sec.classList.add('correct');
+    sec.querySelector('.explain').classList.add('show');
+    lock(sec);
+  } else {
+    fb.classList.add('no');
+    fb.innerHTML = face('-oops') + `<span>還不對喔。提示：${q.hint}${s.tries >= 2 ? '（也可以按「看解答」）' : ''}</span>`;
+    if (s.tries >= 2) sec.querySelector('[data-reveal]').disabled = false;
+  }
+  render();
+});
+
+$('#backHome').addEventListener('click', goHome);
+$('#toHome').addEventListener('click', goHome);
+$('#again').addEventListener('click', () => startSet(run.name, run.codes));
+
+/* ---------- 教師後台 ---------- */
+const PW_HASH = 'd0ab864a17dbd8a07dda05a58ac74d4894b7effa8e1c5152d71adf8b1fcc24d9';
+const sha256 = async s => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)))].map(b => b.toString(16).padStart(2, '0')).join('');
+const dlg = $('#pwDialog'), pw = $('#pw'), pwErr = $('#pwErr'), panel = $('#panel');
+
+function buildPanel() {
+  $('#setLines').innerHTML = Object.entries(SETS).map(([k, s]) => `<p class="setline"><b>${s.name}</b>（<code>#${k}</code>）：${s.codes.join('、')}</p>`).join('');
+  $('#panelList').innerHTML = LETTERS.map(l => `<details><summary>${l} ${CATS[l]}</summary><ol>${Q.filter(q => q.id[0] === l).map(q => `<li><div class="t"><span class="code">${q.id}</span>${q.title}<span class="stars">${STAR(LV(q.id))}</span></div><div class="c">概念：${q.concept}</div><div>${q.explain}</div></li>`).join('')}</ol></details>`).join('');
+}
+$('#teacherOpen').addEventListener('click', () => { pw.value = ''; pwErr.textContent = ''; dlg.showModal(); pw.focus(); });
+$('#pwCancel').addEventListener('click', () => dlg.close());
+$('#pwForm').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  let ok = false;
+  try { ok = (await sha256(pw.value.trim())) === PW_HASH; } catch (e) { ok = false; }
+  if (!ok) { pwErr.textContent = '密碼不正確，請再試一次。'; pw.select(); return; }
+  dlg.close(); buildPanel(); panel.hidden = false;
+  panel.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+});
+$('#panelClose').addEventListener('click', () => { panel.hidden = true; $('#panelList').innerHTML = ''; });
+
+function parseCodes(s) {
+  const codes = [...new Set((s.toUpperCase().match(/[A-J]\d{2}/g) || []))];
+  return {ok: codes.filter(c => BANK[c]), bad: codes.filter(c => !BANK[c])};
+}
+$('#customGo').addEventListener('click', () => {
+  const {ok, bad} = parseCodes($('#customCodes').value), msg = $('#customMsg');
+  if (bad.length) { msg.textContent = `題庫裡沒有：${bad.join('、')}。題號是 A～J 加上 01～05。`; return; }
+  if (ok.length < 1 || ok.length > 20) { msg.textContent = '請輸入 1～20 個題號，例如：A02 B04 C01。'; return; }
+  panel.hidden = true;
+  startSet('自訂題組', ok);
+});
+
+/* ---------- 全班題組：存在網頁本身的 #class-set，老師發布新版本來更新 ---------- */
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+const toClass = c => {
+  const codes = (c && Array.isArray(c.codes) ? c.codes : []).filter(x => BANK[x]).slice(0, 20);
+  return codes.length ? {name: String(c.name || '老師指定題組'), codes, only: !!c.only, at: c.at || ''} : null;
+};
+let CLASS = (() => { try { return toClass(JSON.parse(document.getElementById('class-set').textContent)); } catch (e) { return null; } })();
+/* GitHub Pages 版（網址是 帳號.github.io/儲存庫/）：全班題組改放在同資料夾的 class-set.json */
+const GH = (() => {
+  const m = location.hostname.match(/^([^.]+)\.github\.io$/i), repo = location.pathname.split('/').filter(Boolean)[0];
+  return m && repo ? {owner: m[1], repo} : null;
+})();
+
+function renderClass() {
+  const box = $('#classSet');
+  box.hidden = !CLASS;
+  $('#otherSets').hidden = !!(CLASS && CLASS.only);
+  if (!CLASS) return;
+  box.innerHTML = `<h2 class="section-h">老師指定的題組</h2><div class="sets"><button class="set-card class-card" type="button" data-class><span class="stars">📌 全班一起寫</span><b>${esc(CLASS.name)}</b><span class="d">共 ${CLASS.codes.length} 題：${CLASS.codes.join('、')}</span></button></div>`;
+}
+$('#classSet').addEventListener('click', e => { if (e.target.closest('[data-class]')) startSet(CLASS.name, CLASS.codes); });
+
+/* 這兩段要和檔案最上方的 <title>／<meta>／字型連結、以及發布時的骨架保持一致 */
+const HEAD_PART = `<title>河狸運算思維挑戰</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">`;
+const RESET = ':root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}';
+function pageSource(cls) {
+  const css = document.getElementById('app-css').textContent, js = document.getElementById('app-js').textContent;
+  const data = JSON.stringify(cls).replace(/</g, '\\u003c');
+  return `<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>${RESET}</style></head><body>${HEAD_PART}
+<style id="app-css">${css}</style>
+<script type="application/json" id="class-set">${data}<\/script>
+<div id="root"></div>
+<script id="app-js">${js}<\/script></body></html>`;
+}
+
+let artifactApi = null, canPublish = false;
+const pubMsg = t => { $('#pubMsg').textContent = t; };
+function updateClassTools() {
+  $('#classNow').textContent = CLASS ? `目前全班題組：${CLASS.name}（${CLASS.codes.join('、')}）${CLASS.only ? '，學生只能寫這一組' : ''}` : '目前沒有發布全班題組。';
+  if (GH) {
+    $('#pubGo').disabled = false; $('#pubGo').textContent = '產生全班題組設定';
+    $('#pubClear').disabled = !CLASS; $('#pubClear').textContent = '產生「取消發布」設定';
+    if ($('#ghSteps').hidden) pubMsg('按下按鈕後，把產生的內容存到 GitHub 上的 class-set.json，全班就會看到。');
+    return;
+  }
+  $('#pubGo').disabled = !canPublish;
+  $('#pubClear').disabled = !canPublish || !CLASS;
+  if (!canPublish) pubMsg('只有這個網頁的擁有者或編輯者，在 Claude 裡打開網頁時才能發布。');
+  else pubMsg('發布後，所有開著這個網頁的人都會重新載入。學生已經檢查過的題目，分數會保留。');
+}
+(async () => {
+  if (!window.claude || !window.claude.use) { updateClassTools(); return; }
+  const [a, u] = await Promise.all([claude.use('artifact'), claude.use('user')]);
+  artifactApi = a;
+  canPublish = !!a && !!(u && await u.canEdit());
+  updateClassTools();
+})();
+updateClassTools();
+
+function showGhSteps(cls) {
+  $('#ghSteps').hidden = false;
+  $('#ghJson').value = JSON.stringify(cls, null, 2);
+  $('#ghEdit').href = `https://github.com/${GH.owner}/${GH.repo}/edit/main/class-set.json`;
+  $('#ghCopied').textContent = '';
+  pubMsg(cls ? `已產生「${cls.name}」的設定，照下面三個步驟做。` : '已產生「取消發布」的設定，照下面三個步驟做。');
+}
+$('#ghCopy').addEventListener('click', async () => {
+  const ta = $('#ghJson');
+  try { await navigator.clipboard.writeText(ta.value); $('#ghCopied').textContent = '已複製。'; }
+  catch (e) { ta.focus(); ta.select(); $('#ghCopied').textContent = '已選取，請按 Ctrl＋C（Mac 按 ⌘＋C）複製。'; }
+});
+
+async function publishClass(cls) {
+  if (GH) { showGhSteps(cls); return; }
+  if (!artifactApi || !canPublish) return;
+  $('#pubGo').disabled = $('#pubClear').disabled = true;
+  pubMsg('發布中……');
+  try {
+    await artifactApi.publish(pageSource(cls));
+    pubMsg('已發布，頁面會重新載入。');
+  } catch (e) {
+    const code = e && e.code;
+    if (code === 'conflict') { pubMsg('網頁剛剛被更新過，正在重新載入，載入後請再發布一次。'); return; }
+    if (code === 'not_writer' || code === 'not_granted' || code === 'not_declared' || code === 'consent_required') canPublish = false;
+    updateClassTools();
+    if (code === 'rate_limited') pubMsg('發布得太頻繁了，請等一下再試。');
+    else if (canPublish) pubMsg(`發布沒有成功（${code || '未知錯誤'}），請稍後再試一次。`);
+  }
+}
+$('#pubGo').addEventListener('click', () => {
+  const src = (document.querySelector('input[name="pubSrc"]:checked') || {}).value;
+  let name, codes;
+  if (SETS[src]) ({name, codes} = SETS[src]);
+  else if (src === 'random') { name = '隨機題組'; codes = randomCodes(); }
+  else {
+    const {ok, bad} = parseCodes($('#customCodes').value);
+    if (bad.length) { pubMsg(`題庫裡沒有：${bad.join('、')}。題號是 A～J 加上 01～05。`); return; }
+    if (ok.length < 1 || ok.length > 20) { pubMsg('請先在上面「自訂題組」輸入 1～20 個題號。'); return; }
+    name = '老師自訂題組'; codes = ok;
+  }
+  publishClass({name, codes, only: $('#pubOnly').checked, at: new Date().toISOString()});
+});
+$('#pubClear').addEventListener('click', () => publishClass(null));
+
+/* 網頁本身沒寫全班題組時，讀同資料夾的 class-set.json（GitHub Pages 版用；Claude 版讀不到就略過） */
+async function loadClassFile() {
+  if (CLASS) return;
+  try {
+    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 4000);
+    const r = await fetch('class-set.json?t=' + Date.now(), {cache: 'no-store', signal: ctl.signal});
+    clearTimeout(timer);
+    if (r.ok) CLASS = toClass(await r.json());
+  } catch (e) {}
+}
+
+/* 開啟順序：先恢復這個分頁的作答進度；沒有的話，看網址 #easy、#medium、#hard、#random 或 #A02-B04-C01 */
+renderClass();
+(async () => {
+  await loadClassFile();
+  renderClass(); updateClassTools();
+  const saved = loadRun();
+  if (saved && Array.isArray(saved.codes) && saved.codes.every(c => BANK[c])) return startSet(saved.name, saved.codes, saved.st);
+  if (CLASS && CLASS.only) return;
+  const h = decodeURIComponent(location.hash.slice(1));
+  if (SETS[h] || h === 'random') return startKey(h);
+  if (/^[A-J]\d{2}(-[A-J]\d{2})*$/i.test(h)) { const {ok} = parseCodes(h); if (ok.length) startSet('自訂題組', ok.slice(0, 20)); }
+})();
+</script>
