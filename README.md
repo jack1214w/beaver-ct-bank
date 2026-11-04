@@ -4,6 +4,9 @@
 
 **線上使用**：https://jack1214w.github.io/beaver-ct-bank/
 
+**教師手冊**：https://jack1214w.github.io/beaver-ct-bank/teacher-guide.html
+50 題的答案、解題步驟、圖解、常見錯誤，以及學生卡住時可以問的三層提問。可以用瀏覽器列印成 PDF。
+
 ---
 
 ## 題庫結構
@@ -44,11 +47,13 @@
 | 檔案 | 用途 |
 |---|---|
 | `index.html` | 網站本體，可直接下載雙擊開啟 |
-| `河狸運算思維挑戰.html` | 原始檔（也用來發布到 Claude）；改這個檔，再執行 `sh build.sh` 產生 `index.html` |
+| `河狸運算思維挑戰.html` | 題庫原始檔（也用來發布到 Claude）；改這個檔，再執行 `sh build.sh` 產生 `index.html` |
+| `teacher-guide.html` | 教師手冊網頁 |
+| `教師手冊.html` | 教師手冊原始檔；改這個檔，再執行 `sh build.sh` 產生 `teacher-guide.html` |
 | `class-set.json` | 全班指定題組，`null` 表示沒有 |
-| `build.sh` | 把原始檔包成 `index.html` |
+| `build.sh` | 把兩個原始檔包成 `index.html` 和 `teacher-guide.html` |
 
 ## 注意
 
-- 這是公開的儲存庫，題目答案寫在網頁程式裡，懂得看原始碼的人看得到。教師後台的密碼只是擋在畫面上，不是真正的加密。
+- 這是公開的儲存庫，題目答案寫在網頁程式裡，懂得看原始碼的人看得到。教師後台的密碼只是擋在畫面上，不是真正的加密。教師手冊也是公開網頁，題庫首頁沒有放它的連結，但知道網址的人都能打開。
 - 單一 HTML 檔，不需要伺服器；只有字型會連 Google Fonts，離線時自動改用系統字型。直接雙擊開啟時讀不到 `class-set.json`，其他功能都正常。

@@ -1,0 +1,728 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>河狸運算思維教師手冊</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: 單欄手冊。頂端是類別快速跳轉列；前言 → 快速答案索引 → 十個類別，每題一張詳解卡（答案、步驟、圖解、常見錯誤、三層提問、延伸） */
+:root{
+  --bg:#fbf6ef; --paper:#ffffff; --ink:#3a2a1f; --soft:#7b6555; --line:#ead9c6;
+  --accent:#e0763a; --accent-ink:#b8531c; --accent-tint:#fde8d8;
+  --pond:#2f8aa3; --pond-tint:#dff1f5; --wood:#a8663a; --wood-tint:#f3e0cc;
+  --sun:#e9a520; --good:#3d8b4f; --good-tint:#e2f3e3; --bad:#cf5536; --bad-tint:#fde4db;
+  --red:#d9534f; --yellow:#f2b33d; --blue:#3b7dd8; --green:#3f9a55;
+  --px-on:#2b2118; --px-off:#ffffff;
+  --f-display:"Huninn","Noto Sans TC",system-ui,sans-serif;
+  --f-body:"Noto Sans TC",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1c1814; --paper:#27211b; --ink:#f4e9dc; --soft:#c5b09c; --line:#45382c;
+    --accent:#f08d55; --accent-ink:#f6a877; --accent-tint:#4a2d1d;
+    --pond:#6cc3d8; --pond-tint:#1d3940; --wood:#d39a68; --wood-tint:#3c2c1e;
+    --sun:#f5c451; --good:#7cc98b; --good-tint:#1e3a26; --bad:#f08a6b; --bad-tint:#47271d;
+    --red:#ec7470; --yellow:#f5c451; --blue:#6aa3ef; --green:#6cc184;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1c1814; --paper:#27211b; --ink:#f4e9dc; --soft:#c5b09c; --line:#45382c;
+  --accent:#f08d55; --accent-ink:#f6a877; --accent-tint:#4a2d1d;
+  --pond:#6cc3d8; --pond-tint:#1d3940; --wood:#d39a68; --wood-tint:#3c2c1e;
+  --sun:#f5c451; --good:#7cc98b; --good-tint:#1e3a26; --bad:#f08a6b; --bad-tint:#47271d;
+  --red:#ec7470; --yellow:#f5c451; --blue:#6aa3ef; --green:#6cc184;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.8}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;text-wrap:balance;line-height:1.3}
+svg{max-width:100%}
+.wrap{max-width:880px;margin:0 auto;padding-block:0 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:2px solid var(--line)}
+.nav-in{max-width:880px;margin:0 auto;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;gap:6px;overflow-x:auto;white-space:nowrap}
+.nav a{font-family:var(--f-display);text-decoration:none;color:var(--accent-ink);border:2px solid var(--line);border-radius:999px;padding:1px 12px;font-size:15px}
+.nav a:hover{border-color:var(--accent)}
+
+.cover{display:flex;align-items:center;gap:8px 24px;padding:40px 0 10px;flex-wrap:wrap}
+.cover svg{width:120px;height:120px;flex:none}
+.cover h1{font-size:clamp(32px,6.5vw,48px);margin:0 0 4px;color:var(--accent-ink)}
+.cover p{margin:0;color:var(--soft);max-width:60ch}
+h2.sec{font-size:30px;margin:44px 0 10px;color:var(--accent-ink);border-bottom:3px solid var(--accent);padding-bottom:4px}
+h3.sub{font-size:22px;margin:26px 0 6px}
+p{margin:8px 0}
+.lead{color:var(--soft)}
+.box{background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:12px 18px;margin:12px 0}
+.ladder{display:grid;gap:10px;margin:12px 0;padding:0;list-style:none;counter-reset:l}
+.ladder li{background:var(--paper);border:2px solid var(--line);border-left:10px solid var(--accent);border-radius:6px 12px 12px 6px;padding:8px 14px}
+.ladder li b{font-family:var(--f-display);font-weight:400;font-size:19px;color:var(--accent-ink);margin-right:6px}
+
+.table-wrap{overflow-x:auto;margin:10px 0}
+table{border-collapse:collapse;font-size:15px;background:var(--paper)}
+td,th{border:1px solid var(--line);padding:4px 10px;text-align:center;vertical-align:middle}
+th{background:var(--accent-tint);font-weight:500}
+td.l,th.l{text-align:left}
+td.hl,th.hl{background:var(--good-tint);font-weight:700}
+td.no{background:var(--bad-tint)}
+.idx td:first-child{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-weight:700}
+.idx a{color:var(--ink)}
+
+.qcard{background:var(--paper);border:2px solid var(--line);border-radius:16px;padding:18px 20px;margin:22px 0}
+.q-title{display:flex;align-items:center;gap:8px 12px;border:2px solid var(--accent);border-left:12px solid var(--accent);padding:6px 14px;margin:0 0 6px;flex-wrap:wrap}
+.q-title h3{margin:0;font-size:23px;flex:1;min-width:9em}
+.code{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-weight:700;font-size:15px;background:var(--accent-ink);color:var(--paper);border-radius:8px;padding:1px 8px;white-space:nowrap}
+.stars{color:var(--sun);letter-spacing:2px;white-space:nowrap}
+.meta{font-size:14px;color:var(--soft);margin:0 0 8px}
+.ans{background:var(--good-tint);border-left:6px solid var(--good);border-radius:6px 12px 12px 6px;padding:8px 14px;margin:10px 0;font-weight:700}
+.part{margin:14px 0 4px;font-family:var(--f-display);font-size:18px;color:var(--accent-ink)}
+.qcard ol,.qcard ul{margin:4px 0;padding-left:1.5em}
+.qcard li{margin:2px 0}
+.mist li::marker{content:"✗ ";color:var(--bad)}
+.hints{list-style:none;padding:0;margin:6px 0;display:grid;gap:6px}
+.hints li{border:2px dashed var(--line);border-radius:10px;padding:4px 12px}
+.hints li span{display:inline-block;font-size:13px;font-weight:700;color:var(--paper);background:var(--pond);border-radius:999px;padding:0 9px;margin-right:8px}
+.ext{background:var(--pond-tint);border-radius:12px;padding:8px 14px;margin:12px 0 0}
+.fig{display:block;margin:10px auto;width:100%;height:auto}
+.figbox{margin:8px 0}
+.tree,.tree ul{list-style:none;margin:0;padding:0}
+.tree ul{padding-left:1.6em;border-left:2px dashed var(--line);margin-left:.6em}
+.tree li{margin:4px 0}
+.tree .n{display:inline-block;border:2px solid var(--line);border-radius:8px;padding:0 10px;background:var(--paper)}
+.tree .ok{border-color:var(--good);background:var(--good-tint);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0}
+.chips span{border:2px solid var(--line);border-radius:8px;padding:0 10px;font-variant-numeric:tabular-nums;background:var(--paper)}
+.chips span.sw{border-color:var(--accent);background:var(--accent-tint);font-weight:700}
+.chips i{font-style:normal;color:var(--soft);font-size:14px}
+.small{font-size:14px;color:var(--soft)}
+
+@media print{
+  .nav{display:none}
+  body{background:#fff;font-size:12pt}
+  .qcard,.box,table,.figbox{break-inside:avoid}
+  h2.sec{break-before:page}
+  .wrap{max-width:none}
+}
+@media (max-width:520px){.qcard{padding:14px 12px}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="bv" viewBox="0 0 120 120">
+      <g stroke="#3a2a1f" stroke-width="4" stroke-linejoin="round">
+        <circle cx="28" cy="32" r="14" fill="#c8743f"/><circle cx="92" cy="32" r="14" fill="#c8743f"/>
+        <ellipse cx="60" cy="66" rx="44" ry="40" fill="#c8743f"/>
+        <ellipse cx="60" cy="82" rx="25" ry="18" fill="#f6d4ad" stroke-width="3"/>
+        <rect x="51.5" y="88" width="8.5" height="14" rx="2" fill="#fff" stroke-width="2.5"/>
+        <rect x="60" y="88" width="8.5" height="14" rx="2" fill="#fff" stroke-width="2.5"/>
+        <path d="M50 74 Q60 68 70 74 Q66 84 60 86 Q54 84 50 74Z" fill="#3a2a1f" stroke-width="2"/>
+      </g>
+      <circle cx="28" cy="32" r="6" fill="#9c5a2e"/><circle cx="92" cy="32" r="6" fill="#9c5a2e"/>
+      <path d="M34 78 L8 73 M34 85 L8 88 M86 78 L112 73 M86 85 L112 88" stroke="#3a2a1f" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="31" cy="70" r="6" fill="#f2917b" opacity=".55"/><circle cx="89" cy="70" r="6" fill="#f2917b" opacity=".55"/>
+      <path d="M38 58 Q45 50 52 58 M68 58 Q75 50 82 58" stroke="#3a2a1f" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <rect x="22" y="40" width="34" height="24" rx="10" fill="none" stroke="#3a2a1f" stroke-width="3"/><rect x="64" y="40" width="34" height="24" rx="10" fill="none" stroke="#3a2a1f" stroke-width="3"/><path d="M56 50 H64" stroke="#3a2a1f" stroke-width="3"/>
+    </symbol>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#7b6555"/></marker>
+    <marker id="arw-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#e0763a"/></marker>
+  </defs>
+</svg>
+
+<nav class="nav" aria-label="章節"><div class="nav-in" id="nav"></div></nav>
+
+<div class="wrap">
+<header class="cover">
+  <svg viewBox="0 0 120 120" aria-hidden="true"><use href="#bv"/></svg>
+  <div>
+    <h1>河狸運算思維挑戰　教師手冊</h1>
+    <p>50 題的答案、解題步驟與圖解，以及學生卡住時可以怎麼引導。適用網頁版題庫（題號 A01～J05）。</p>
+  </div>
+</header>
+
+<h2 class="sec" id="guide">怎麼使用這本手冊</h2>
+<p>每一題的詳解卡都有六個部分：<b>答案</b>、<b>解題步驟</b>、<b>圖解</b>（需要時才放）、<b>常見錯誤</b>、<b>學生卡住時可以這樣問</b>、<b>延伸討論</b>。上課時建議先看「常見錯誤」，判斷學生卡在哪裡，再從「這樣問」挑一句開始引導。</p>
+
+<h3 class="sub">三層提問：先問，再提示，最後才陪著做</h3>
+<p class="lead">學生說「我不會」時，先不要給答案。依序往下走，學生一動起來就停在那一層。</p>
+<ol class="ladder">
+  <li><b>第 1 層・讀懂題目</b>請學生用自己的話說題目在問什麼、有哪些規則。很多錯誤其實是漏看一個條件，例如「只有一個人說真話」「由上到下」。</li>
+  <li><b>第 2 層・給一個策略</b>提醒可以用的方法：一步一步畫下來、列表格、從最大的開始、假設看看、先做小一點的例子。</li>
+  <li><b>第 3 層・陪著做第一步</b>和學生一起完成第一步，接下來讓學生自己做。做完請學生說說「為什麼這樣做」。</li>
+</ol>
+<div class="box"><p><b>網頁內建提示的時機：</b>學生答錯一次會看到一句提示（和本手冊「第 2 層」大致相同）；連錯兩次才能按「看解答」，但這題不得分。老師可以鼓勵學生先用手冊的提問想一想，再決定要不要看解答。</p></div>
+
+<h3 class="sub">一節課的流程建議（40 分鐘）</h3>
+<div class="table-wrap"><table>
+  <tr><th>時間</th><th class="l">活動</th><th class="l">老師可以做什麼</th></tr>
+  <tr><td>5 分</td><td class="l">暖身</td><td class="l">投影一題簡單題（例如 A01），全班一起想，示範「把每一步畫下來」。</td></tr>
+  <tr><td>25 分</td><td class="l">個人或兩人一組挑戰 10 題</td><td class="l">巡視時看學生卡在哪一題，用三層提問引導；記下全班都卡住的題目。</td></tr>
+  <tr><td>10 分</td><td class="l">分享與討論</td><td class="l">挑 1～2 題請學生上台說解法，比較不同做法；用「延伸討論」收尾。</td></tr>
+</table></div>
+
+<h3 class="sub">十種能力與運算思維</h3>
+<div class="table-wrap"><table>
+  <tr><th>類別</th><th class="l">能力</th><th class="l">主要的運算思維面向</th><th class="l">生活中的例子</th></tr>
+  <tr><td>A</td><td class="l">排隊與堆疊</td><td class="l">抽象化（資料結構）</td><td class="l">疊盤子、排隊、上一頁、復原鍵</td></tr>
+  <tr><td>B</td><td class="l">編碼與二進位</td><td class="l">抽象化（資料表示）</td><td class="l">電腦用 0 和 1 存所有資料</td></tr>
+  <tr><td>C</td><td class="l">地圖與路線</td><td class="l">抽象化、演算法</td><td class="l">地圖導航、捷運轉乘</td></tr>
+  <tr><td>D</td><td class="l">圖片與壓縮</td><td class="l">樣式辨識、抽象化</td><td class="l">數位照片、壓縮檔</td></tr>
+  <tr><td>E</td><td class="l">邏輯推理</td><td class="l">拆解（分情況討論）</td><td class="l">偵探推理、數獨</td></tr>
+  <tr><td>F</td><td class="l">規律與樣式</td><td class="l">樣式辨識、一般化</td><td class="l">磁磚花紋、週期與日期</td></tr>
+  <tr><td>G</td><td class="l">最佳方案</td><td class="l">演算法（最佳化）</td><td class="l">排班、裝行李、找零錢</td></tr>
+  <tr><td>H</td><td class="l">偵錯與密碼</td><td class="l">抽象化、演算法</td><td class="l">條碼檢查碼、密碼</td></tr>
+  <tr><td>I</td><td class="l">程式與指令</td><td class="l">演算法（循序、選擇、重複）</td><td class="l">Scratch、機器人</td></tr>
+  <tr><td>J</td><td class="l">搜尋與排序</td><td class="l">演算法、拆解（分而治之）</td><td class="l">查字典、比賽淘汰制</td></tr>
+</table></div>
+
+<h3 class="sub">推薦題組</h3>
+<div class="table-wrap"><table>
+  <tr><th>題組</th><th class="l">題目</th><th class="l">適合</th></tr>
+  <tr><td>簡單 ★</td><td class="l">A01、B01、C01、D01、E01、F01、G01、H01、I01、J01</td><td class="l">第一次接觸、暖身</td></tr>
+  <tr><td>中等 ★★</td><td class="l">A03、B03、C03、D03、E03、F03、G03、H03、I03、J03</td><td class="l">已經做過簡單題組的學生</td></tr>
+  <tr><td>挑戰 ★★★</td><td class="l">A05、B05、C05、D05、E05、F05、G05、H05、I05、J05</td><td class="l">喜歡挑戰、需要延伸的學生</td></tr>
+</table></div>
+
+<h2 class="sec" id="index">快速答案索引</h2>
+<p class="lead">上課時要快速對答案，看這張表就好。點題號可以跳到詳解。</p>
+<div class="table-wrap"><table class="idx" id="idx"></table></div>
+
+<main id="cards"></main>
+</div>
+
+<script>
+/* ---------- 圖解小工具 ---------- */
+const S = (w, h, inner, label, max) => `<svg class="fig" viewBox="0 0 ${w} ${h}" role="img" aria-label="${label}" style="max-width:${max || w}px">${inner}</svg>`;
+const tbl = (head, rows, opt = {}) => `<div class="table-wrap"><table>${head ? `<tr>${head.map(h => `<th${opt.left ? ' class="l"' : ''}>${h}</th>`).join('')}</tr>` : ''}${rows.map(r => `<tr>${r.map(c => typeof c === 'object' ? `<td class="${c.c || ''}">${c.t}</td>` : `<td${opt.left ? ' class="l"' : ''}>${c}</td>`).join('')}</tr>`).join('')}</table></div>`;
+const PLATE = {紅: 'var(--red)', 黃: 'var(--yellow)', 藍: 'var(--blue)', 綠: 'var(--green)', 白: 'var(--soft)', 黑: 'var(--ink)'};
+
+function stacks(states, steps, under, label) {
+  const cw = 84, gap = 76, ph = 26, maxH = Math.max(...states.map(s => s.length));
+  const H = maxH * ph + 74, W = states.length * cw + (states.length - 1) * gap + 20, base = H - 40;
+  let s = '';
+  states.forEach((st, i) => {
+    const x = 10 + i * (cw + gap);
+    s += `<line x1="${x - 4}" y1="${base}" x2="${x + cw + 4}" y2="${base}" stroke="var(--soft)" stroke-width="2"/>`;
+    st.forEach((k, j) => {
+      const c = PLATE[k] || 'var(--accent)';
+      s += `<rect x="${x}" y="${base - (j + 1) * ph + 2}" width="${cw}" height="${ph - 4}" rx="${(ph - 4) / 2}" fill="${c}" fill-opacity=".25" stroke="${c}" stroke-width="2"/><text x="${x + cw / 2}" y="${base - j * ph - 8}" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ink)">${k}</text>`;
+    });
+    s += `<text x="${x + cw / 2}" y="${H - 14}" text-anchor="middle" font-size="13" fill="var(--soft)">${under[i]}</text>`;
+    if (i < states.length - 1) {
+      const ax = x + cw + 8;
+      s += `<path d="M${ax} ${base - 18} H${ax + gap - 16}" stroke="#7b6555" stroke-width="2" marker-end="url(#arw)"/><text x="${ax + (gap - 16) / 2}" y="${base - 26}" text-anchor="middle" font-size="13" fill="var(--accent-ink)">${steps[i]}</text>`;
+    }
+  });
+  return S(W, H, s, label);
+}
+
+function graph(w, h, N, E, {chosen = [], path = [], hi = [], note = {}, dashed = false} = {}) {
+  const pairs = chosen.concat(path.slice(1).map((b, i) => [path[i], b]));
+  const on = (a, b) => pairs.some(([p, q]) => (p === a && q === b) || (p === b && q === a));
+  let s = E.map(([a, b]) => `<line x1="${N[a][0]}" y1="${N[a][1]}" x2="${N[b][0]}" y2="${N[b][1]}" stroke="${on(a, b) ? 'var(--accent)' : 'var(--line)'}" stroke-width="${on(a, b) ? 7 : 3}"${!on(a, b) && dashed ? ' stroke-dasharray="8 6"' : ''} stroke-linecap="round"/>`).join('');
+  s += `<g font-size="17" font-weight="700" text-anchor="middle" fill="var(--wood)" stroke="var(--paper)" stroke-width="5" paint-order="stroke">${E.filter(e => e[2] != null).map(e => `<text x="${e[3]}" y="${e[4]}">${e[2]}</text>`).join('')}</g>`;
+  s += `<g font-size="19" font-weight="700" text-anchor="middle" fill="var(--ink)">${Object.entries(N).map(([k, [x, y]]) => `<circle cx="${x}" cy="${y}" r="25" fill="${hi.includes(k) ? 'var(--accent-tint)' : 'var(--paper)'}" stroke="${hi.includes(k) ? 'var(--accent)' : 'var(--soft)'}" stroke-width="3"/><text x="${x}" y="${y + 7}">${k}</text>`).join('')}</g>`;
+  s += `<g font-size="15" font-weight="700" text-anchor="middle" fill="var(--good)">${Object.entries(note).map(([k, [t, x, y]]) => `<text x="${x}" y="${y}">${t}</text>`).join('')}</g>`;
+  return S(w, h, s, '道路圖解');
+}
+
+function pix(rows, {cell = 30, side = [], quad = false, hiRow = -1} = {}) {
+  const n = rows[0].length, lw = 62, sw = side.length ? 230 : 0, w = lw + n * cell + 4 + sw, h = rows.length * cell + 4;
+  let s = '';
+  rows.forEach((r, i) => {
+    const y = 2 + i * cell;
+    if (i === hiRow) s += `<rect x="${lw - 2}" y="${y - 2}" width="${n * cell + 8}" height="${cell + 4}" fill="none" stroke="var(--accent)" stroke-width="3" rx="4"/>`;
+    s += `<text x="${lw - 10}" y="${y + cell / 2 + 5}" text-anchor="end" font-size="14" fill="var(--soft)">第 ${i + 1} 列</text>`;
+    [...r].forEach((c, j) => s += `<rect x="${lw + 2 + j * cell}" y="${y}" width="${cell}" height="${cell}" fill="${c === '1' ? 'var(--px-on)' : 'var(--px-off)'}" stroke="var(--soft)" stroke-width="1.5"/>`);
+    if (side[i]) s += `<text x="${lw + n * cell + 16}" y="${y + cell / 2 + 5}" font-size="15" fill="var(--ink)">${side[i]}</text>`;
+  });
+  if (quad) { const mx = lw + 2 + n * cell / 2, my = 2 + rows.length * cell / 2; s += `<path d="M${mx} 2V${h - 2}M${lw + 2} ${my}H${lw + 2 + n * cell}" stroke="var(--accent)" stroke-width="4"/>`; }
+  return S(w, h, s, '像素圖解');
+}
+
+function robot(cols, rows, pts, {items = {}, face = ''} = {}) {
+  const c = 46, ox = 20, oy = 12, W = ox * 2 + cols * c + (face ? 120 : 0), H = oy + rows * c + 30;
+  const X = i => ox + (i + .5) * c, Y = j => oy + (rows - j - .5) * c;
+  let s = '<g stroke="var(--line)" stroke-width="2">';
+  for (let i = 0; i <= cols; i++) s += `<line x1="${ox + i * c}" y1="${oy}" x2="${ox + i * c}" y2="${oy + rows * c}"/>`;
+  for (let j = 0; j <= rows; j++) s += `<line x1="${ox}" y1="${oy + j * c}" x2="${ox + cols * c}" y2="${oy + j * c}"/>`;
+  s += '</g>';
+  s += Object.entries(items).map(([k, [i, j]]) => `<text x="${X(i)}" y="${Y(j) + 10}" text-anchor="middle" font-size="26">${k}</text>`).join('');
+  s += `<polyline points="${pts.map(([i, j]) => `${X(i)},${Y(j)}`).join(' ')}" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arw-a)" opacity=".9"/>`;
+  s += `<circle cx="${X(pts[0][0])}" cy="${Y(pts[0][1])}" r="9" fill="var(--pond)"/><text x="${X(pts[0][0])}" y="${oy + rows * c + 22}" text-anchor="middle" font-size="13" fill="var(--ink)">起點</text>`;
+  if (face) s += `<text x="${ox * 2 + cols * c + 10}" y="${oy + rows * c / 2}" font-size="15" fill="var(--ink)">${face}</text>`;
+  return S(W, H, s, '機器人路線圖解');
+}
+
+const tree = html => `<ul class="tree">${html}</ul>`;
+const chips = (arr, sw = []) => `<div class="chips">${arr.map((x, i) => `<span class="${sw.includes(i) ? 'sw' : ''}">${x}</span>`).join('')}</div>`;
+
+/* ---------- 50 題詳解 ---------- */
+const CATS = {A: '排隊與堆疊', B: '編碼與二進位', C: '地圖與路線', D: '圖片與壓縮', E: '邏輯推理', F: '規律與樣式', G: '最佳方案', H: '偵錯與密碼', I: '程式與指令', J: '搜尋與排序'};
+const LV = id => Number(id.slice(1)) <= 2 ? 1 : Number(id.slice(1)) <= 4 ? 2 : 3;
+const STAR = n => '★'.repeat(n) + '☆'.repeat(3 - n);
+
+const G = [
+/* A */
+{id: 'A01', title: '河狸餐廳的盤子', concept: '堆疊（後放的先拿）', short: '黑、黃、紅',
+ a: '由上到下：黑、黃、紅',
+ steps: ['先畫出一開始的盤子（由下往上）：紅、黃、藍、綠。最上面是綠。', '① 拿走 1 個：拿走最上面的綠 → 紅、黃、藍。', '② 放上白盤子：白放在最上面 → 紅、黃、藍、白。', '③ 拿走 2 個：先拿白、再拿藍 → 紅、黃。', '④ 放上黑盤子 → 紅、黃、黑（由下往上）。', '題目問「由上到下」，所以答案是黑、黃、紅。'],
+ fig: () => stacks([['紅', '黃', '藍', '綠'], ['紅', '黃', '藍'], ['紅', '黃', '藍', '白'], ['紅', '黃'], ['紅', '黃', '黑']], ['① 拿 1', '② 放白', '③ 拿 2', '④ 放黑'], ['開始', '①後', '②後', '③後', '④後'], '盤子的五個狀態'),
+ mist: ['答成「紅、黃、黑」：方向寫反了，那是由下往上。', '③ 只拿走 1 個，或從最下面拿。', '在腦中想，沒有畫下來，中途就亂了。'],
+ hints: ['現在最上面的盤子是哪一個？', '每做一步，就把盤子重畫一次。', '題目問的是由上到下，還是由下到上？'],
+ ext: '生活中還有哪些「後放的先拿」？（疊書、衣櫃裡的衣服、瀏覽器的「上一頁」）'},
+
+{id: 'A02', title: '排隊買冰淇淋', concept: '佇列（先來的先走）', short: '小石；3 隻',
+ a: '最前面是小石，隊伍還有 3 隻',
+ steps: ['排隊的規則：排頭先離開，新來的排到最後面。', '把每一步之後的隊伍由前到後寫下來（見下表）。', '最後隊伍是小石、小花、小葉，排頭是小石，共 3 隻。'],
+ fig: () => tbl(['步驟', '隊伍（前 → 後）'], [['開始', '小樹、阿木、小石'], ['① 排頭買完離開', '阿木、小石'], ['② 小花來排隊', '阿木、小石、小花'], ['③ 小葉來排隊', '阿木、小石、小花、小葉'], ['④ 排頭買完離開', {t: '小石、小花、小葉', c: 'hl'}]]),
+ mist: ['第 ④ 步讓最後來的小葉離開：把排隊和疊盤子搞混了。', '讓新來的插到前面。'],
+ hints: ['排隊時，誰先買到冰淇淋？', '新來的河狸要站在哪裡？', '把每一步之後的隊伍寫成一排名字。'],
+ ext: '和 A01 盤子比較：一個「先來的先走」，一個「後來的先走」。電腦裡兩種都有，例如印表機排隊列印是佇列。'},
+
+{id: 'A03', title: '死巷裡的木頭', concept: '堆疊（進出順序）', short: '3→1→4→2',
+ a: '3→1→4→2 做不到',
+ steps: ['一個一個選項試：要送走某根木頭之前，比它號碼小的木頭一定都已經推進去了。', '3→1→4→2：要先送走 3，必須先推進 1、2、3，再拉出 3。', '這時巷子裡由內到外是 1、2，最靠近出口的是 2。', '下一個要送走 1，但 1 被 2 擋住，做不到。', '其他選項都做得到，例如 2→1→4→3（見下表）。'],
+ fig: () => S(640, 170, `<path d="M380 40 H40 V130 H380" fill="var(--wood-tint)" stroke="var(--ink)" stroke-width="5" stroke-linejoin="round"/>
+  ${[[100, 1], [160, 2]].map(([x, n]) => `<circle cx="${x}" cy="85" r="24" fill="#d79b62" stroke="#3a2a1f" stroke-width="3"/><text x="${x}" y="92" text-anchor="middle" font-size="19" font-weight="700" fill="#3a2a1f">${n}</text>`).join('')}
+  <path d="M86 60 L114 110 M114 60 L86 110" stroke="var(--bad)" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="470" cy="85" r="24" fill="#d79b62" stroke="#3a2a1f" stroke-width="3"/><text x="470" y="92" text-anchor="middle" font-size="19" font-weight="700" fill="#3a2a1f">3</text>
+  <text x="470" y="140" text-anchor="middle" font-size="14" fill="var(--soft)">3 已送走</text>
+  <text x="210" y="28" text-anchor="middle" font-size="15" fill="var(--ink)">下一個要送走 1，但 2 擋在出口前</text>`, '1 被 2 擋住，無法先送走'),
+ fig2: () => tbl(['送走順序 2→1→4→3 的做法'], [['推 1 → 推 2 → 拉出 2 → 拉出 1 → 推 3 → 推 4 → 拉出 4 → 拉出 3']], {left: true}),
+ mist: ['以為 4→3→2→1 做不到：其實四根都推進去再全部拉出就是這個順序。', '以為一定要四根都推完才能拉。'],
+ hints: ['要先送走 3，哪些木頭一定已經在巷子裡？', '這時最靠近出口的是哪一根？', '下一個要送走的木頭拉得出來嗎？'],
+ ext: '1～4 號共有 24 種送出順序，其中只有 14 種做得到。可以請學生分組列列看。'},
+
+{id: 'A04', title: '神奇的復原鍵', concept: '堆疊（復原紀錄）', short: '河國',
+ a: '河國',
+ steps: ['電腦把打過的字一個個疊起來記住，復原時拿掉最上面（最近打的）那一個。', '照下表一步一步做，注意連按兩次復原，第二次取消的是「狸」。'],
+ fig: () => tbl(['動作', '畫面', '說明'], [['打「河」', '河', ''], ['打「狸」', '河狸', ''], ['打「好」', '河狸好', ''], ['復原', '河狸', '取消「好」'], ['打「棒」', '河狸棒', ''], ['復原', '河狸', '取消「棒」'], ['復原', '河', '取消「狸」'], ['打「國」', {t: '河國', c: 'hl'}, '']]),
+ mist: ['答「河狸國」：以為第二次復原又取消了已經取消過的「好」。', '答「河狸好國」：以為復原只是退一格游標。'],
+ hints: ['按第一次復原後，畫面上剩下什麼？', '第二次按復原時，畫面上最後一個字是哪一個？', '每一步都把畫面上的字寫下來。'],
+ ext: '「重做」（Redo）又是怎麼運作的？可以想成把被復原的字放到另一疊，需要時再拿回來。'},
+
+{id: 'A05', title: '火車調車場', concept: '堆疊（排序）', short: '3, 2, 1, 4',
+ a: '3, 2, 1, 4',
+ steps: ['出口一定要先出 1。還不能出去的車廂只好先進側線。', '側線是死巷，最後進去的車廂在最外面，最先出來。', '照下表模擬 3, 2, 1, 4，每一節都能在需要時開出去。', '失敗的例子 2, 3, 1, 4：2、3 都進側線（3 在外面），1 出去後下一個要 2，但 2 被 3 擋住。'],
+ fig: () => tbl(['開來的車廂', '動作', '側線（裡 → 外）', '已開出'], [['3', '還不能出去，進側線', '3', '—'], ['2', '還不能出去，進側線', '3、2', '—'], ['1', '直接開出', '3、2', '1'], ['—', '側線外面的 2 開出', '3', '1、2'], ['—', '側線的 3 開出', '（空）', '1、2、3'], ['4', '直接開出', '（空）', {t: '1、2、3、4', c: 'hl'}]]),
+ mist: ['以為側線先進的先出來。', '只看前兩節就下結論，沒有模擬到最後。'],
+ hints: ['第一個開來的車廂可以直接出去嗎？', '進了側線的車廂，誰在最外面？', '換你需要 2 號時，它是不是在側線最外面？'],
+ ext: '找規律：只要開來的順序裡出現「先一節中號、再一節大號、後面又一節小號」（例如 2…3…1），就一定會卡住。'},
+
+/* B */
+{id: 'B01', title: '翻牌變數字', concept: '二進位', short: '16、4、1',
+ a: '翻開 16、4、1',
+ steps: ['從最大的卡片開始。21 比 16 大，翻開 16，剩 5。', '8 比 5 大，不翻。', '4 不比 5 大，翻開 4，剩 1。', '2 比 1 大，不翻；1 翻開，剩 0。', '翻開寫 1、沒翻寫 0：10101，就是 21 的二進位。'],
+ fig: () => S(600, 160, [16, 8, 4, 2, 1].map((v, i) => { const on = [1, 0, 1, 0, 1][i], x = 20 + i * 116; return `<rect x="${x}" y="10" width="96" height="100" rx="10" fill="${on ? 'var(--accent-tint)' : 'var(--paper)'}" stroke="${on ? 'var(--accent)' : 'var(--soft)'}" stroke-width="3"${on ? '' : ' stroke-dasharray="6 4"'}/><text x="${x + 48}" y="70" text-anchor="middle" font-size="28" font-weight="700" fill="${on ? 'var(--ink)' : 'var(--soft)'}">${v}</text><text x="${x + 48}" y="148" text-anchor="middle" font-size="26" font-weight="700" fill="var(--accent-ink)">${on}</text>`; }).join(''), '16、4、1 翻開，寫成 10101'),
+ mist: ['用 16＋2＋2＋1：每張卡片只有一張。', '從小的卡片開始湊，容易湊不出來或湊錯。'],
+ hints: ['21 用得到 16 嗎？用了之後還剩多少？', '剩下的數，下一張卡片用得到嗎？', '每張卡片只能翻一次。'],
+ ext: '5 張卡最大能表示多少？（31）請學生試著表示自己的座號。'},
+
+{id: 'B02', title: '河狸燈塔', concept: '二進位', short: '11；15',
+ a: '現在是 11，全亮是 15',
+ steps: ['亮的燈是 8、2、1，加起來 8＋2＋1＝11。', '四盞全亮：8＋4＋2＋1＝15。', '亮寫 1、暗寫 0，燈塔現在是 1011。4 盞燈能表示 0～15，共 16 種。'],
+ mist: ['把暗的燈也加進去，答 15。', '全亮答 16：把「共 16 種」和「最大是 15」搞混了（還有 0）。'],
+ hints: ['哪幾盞燈是亮的？', '只把亮的燈代表的數加起來。', '全部亮的時候，四個數加起來是多少？'],
+ ext: '再加一盞燈，它應該代表多少？（16，前一盞的 2 倍）'},
+
+{id: 'B03', title: '藍舌頭魔法果汁', concept: '二進位（用最少的試驗找答案）', short: '第 5 瓶',
+ a: '第 5 瓶',
+ steps: ['那一瓶一定被「紅帽」和「藍帽」喝過，因為他們舌頭變藍。', '紅帽和藍帽都喝過的是 5 和 7。', '綠帽舌頭沒變，所以綠帽喝過的瓶子都沒問題：7 被刪掉。', '答案是第 5 瓶。', '進一步看：紅帽喝的瓶號都要用到 4，綠帽都要用到 2，藍帽都要用到 1。紅、藍變色就是 4＋1＝5。'],
+ fig: () => `<div class="table-wrap"><table><tr><th></th>${[1, 2, 3, 4, 5, 6, 7].map(n => `<th class="${n === 5 ? 'hl' : ''}">${n}</th>`).join('')}<th>結果</th><th>代表</th></tr>
+   ${[['紅帽', [4, 5, 6, 7], '變藍', 4], ['綠帽', [2, 3, 6, 7], '沒變', 2], ['藍帽', [1, 3, 5, 7], '變藍', 1]].map(([h, d, r, v]) => `<tr><th>${h}</th>${[1, 2, 3, 4, 5, 6, 7].map(n => `<td class="${n === 5 ? 'hl' : n === 7 && h === '綠帽' ? 'no' : ''}">${d.includes(n) ? '●' : ''}</td>`).join('')}<td>${r}</td><td>${v}</td></tr>`).join('')}</table></div><p class="small">紅、藍變色 → 4＋1＝5。綠帽喝過 7 卻沒變色，所以不是 7。</p>`,
+ mist: ['只看紅帽和藍帽，答 7：忘了用「綠帽沒變色」刪掉選項。', '以為要找三隻都喝過的瓶子。'],
+ hints: ['舌頭變藍的河狸，一定喝過有魔法粉的那瓶嗎？', '綠帽舌頭沒變，代表他喝的瓶子怎麼樣？', '紅帽和藍帽都喝過、綠帽沒喝過的是哪一瓶？'],
+ ext: '如果有 15 瓶果汁，最少要幾隻河狸試喝？（4 隻，因為 4 張卡最大是 15）'},
+
+{id: 'B04', title: '需要幾張卡片', concept: '二進位（位數）', short: '7 張',
+ a: '7 張',
+ steps: ['算出 n 張卡片全部翻開的最大值（見下表）。', '6 張最大只有 63，不夠表示 100。', '7 張最大 127，0～100 的每個數都表示得出來。'],
+ fig: () => tbl(['卡片張數', '1', '2', '3', '4', '5', '6', '7'], [['全翻最大', '1', '3', '7', '15', '31', {t: '63', c: 'no'}, {t: '127', c: 'hl'}]]),
+ mist: ['答 6：以為最後一張是 64 就夠了，但 6 張是 1～32，最大 63。', '答 100 或 50：沒有想到二進位每張卡的值。'],
+ hints: ['5 張卡全部翻開是多少？', '6 張呢？7 張呢？', '要表示 100，最大值至少要多少？'],
+ ext: '表示到 1000 需要幾張卡？（10 張，最大 1023）'},
+
+{id: 'B05', title: '點點線線密碼', concept: '編碼（一段密碼有幾種讀法）', short: '5 種',
+ a: '5 種',
+ steps: ['第一個字可能是「河」（●）或「木」（●—），分兩種情況。', '每種情況再看剩下的符號，一路分下去，直到符號用完。', '畫成樹狀圖就不會漏掉（見下圖）。'],
+ fig: () => tree(`<li><span class="n">●—●—</span><ul>
+   <li><span class="n">河（●）剩 —●—</span><ul>
+     <li><span class="n">狸（—）剩 ●—</span><ul><li><span class="n ok">河 狸 → 河狸河狸</span></li><li><span class="n ok">木 → 河狸木</span></li></ul></li>
+     <li><span class="n">水（—●）剩 —</span><ul><li><span class="n ok">狸 → 河水狸</span></li></ul></li></ul></li>
+   <li><span class="n">木（●—）剩 ●—</span><ul><li><span class="n ok">河 狸 → 木河狸</span></li><li><span class="n ok">木 → 木木</span></li></ul></li></ul></li>`),
+ mist: ['忘了「水」（—●），只找到 3 種。', '只想到「全部拆最小」和「全部拆最大」兩種。'],
+ hints: ['第一個字可能是哪兩個字？', '選了第一個字之後，還剩下哪些符號？', '把每種情況畫成分岔的樹。'],
+ ext: '怎麼改密碼本，讓每段密碼只有一種讀法？（字和字之間加停頓，或讓沒有一個字的密碼剛好是另一個字的開頭）'},
+
+/* C */
+{id: 'C01', title: '一筆畫挑戰', concept: '圖（一筆畫）', short: '乙',
+ a: '乙',
+ steps: ['數每個點連了幾條線，標在點旁邊（見下圖）。', '連了單數條線的點叫「奇點」。', '奇點是 0 個或 2 個才能一筆畫；有 2 個時，要從其中一個奇點出發。', '甲有 4 個奇點、丙有 4 個，都不行；乙只有 2 個，可以。'],
+ fig: () => S(620, 220, `<g stroke="var(--ink)" stroke-width="4" stroke-linecap="round" fill="none"><path d="M50 30H170V150H50Z M50 30L170 150 M170 30L50 150"/><path d="M250 30H370V150H250Z M250 30L370 150"/><path d="M460 90H580 M520 30V150"/></g>
+   <g font-size="17" font-weight="700" text-anchor="middle">${[[36, 26, 3], [184, 26, 3], [36, 166, 3], [184, 166, 3], [128, 96, 4], [236, 26, 3], [384, 26, 2], [236, 166, 2], [384, 166, 3], [446, 96, 1], [594, 96, 1], [536, 30, 1], [536, 162, 1], [536, 84, 4]].map(([x, y, d]) => `<text x="${x}" y="${y}" fill="${d % 2 ? 'var(--bad)' : 'var(--good)'}">${d}</text>`).join('')}</g>
+   <g font-size="15" text-anchor="middle" fill="var(--ink)"><text x="110" y="200">甲：4 個奇點 ✗</text><text x="310" y="200">乙：2 個奇點 ✓</text><text x="520" y="200">丙：4 個奇點 ✗</text></g>`, '每個點連的線數，紅色是奇點'),
+ mist: ['在乙圖從偶點（只連 2 條線的角）出發，畫不完，就以為乙不行。', '只靠一直試，試不出來就放棄。'],
+ hints: ['每個點各連了幾條線？', '連了單數條線的點有幾個？', '試試從連了 3 條線的那個角出發。'],
+ ext: '「日」字可以一筆畫，「田」字不行，為什麼？（數奇點：日有 2 個，田有 4 個）'},
+
+{id: 'C02', title: '回家最少幾段路', concept: '圖（最少步數）', short: '3 段',
+ a: '3 段（家→樹→花→湖）',
+ steps: ['從家出發，標出走 1 段能到的地方：橋、樹。', '從橋、樹再走 1 段（共 2 段）能到：石、草、花。', '從石、草、花再走 1 段（共 3 段）：花可以直接到湖。', '所以最少 3 段。圖上綠色數字是「走幾段才到」。'],
+ fig: () => graph(660, 280, {家: [60, 140], 橋: [190, 50], 樹: [190, 230], 石: [330, 50], 草: [330, 140], 花: [330, 230], 洞: [470, 90], 湖: [600, 150]},
+   [['家', '橋'], ['家', '樹'], ['橋', '石'], ['橋', '草'], ['樹', '草'], ['樹', '花'], ['石', '洞'], ['草', '洞'], ['花', '湖'], ['洞', '湖']],
+   {path: ['家', '樹', '花', '湖'], hi: ['家', '湖'], note: {家: ['0', 60, 100], 橋: ['1', 190, 18], 樹: ['1', 190, 275], 石: ['2', 330, 18], 草: ['2', 362, 176], 花: ['2', 330, 275], 洞: ['3', 470, 58], 湖: ['3', 600, 110]}}),
+ mist: ['以為線越短越近，走「家→橋→石→洞→湖」（4 段）。', '數成經過幾個地方（答 4 或 5），而不是走了幾段。'],
+ hints: ['從家走一段能到哪裡？', '走兩段能到哪些地方？', '「花」到「湖」那條線雖然長，算幾段？'],
+ ext: '這種「一圈一圈往外找」的方法叫廣度優先搜尋，導航和遊戲裡找路都會用到。'},
+
+{id: 'C03', title: '送信的最短路線', concept: '最短路徑', short: '13 分鐘；ACBDEF',
+ a: '13 分鐘，A→C→B→D→E→F',
+ steps: ['從 A 出發，一個村莊一個村莊算「最快幾分鐘到」。', 'C：直走 2 分鐘。', 'B：直走要 4，但 A→C→B 只要 2＋1＝3，比較快。', 'D：從 B 去 3＋5＝8；從 C 去 2＋8＝10。取 8。', 'E：從 D 去 8＋2＝10；從 C 去 2＋10＝12。取 10。', 'F：從 E 去 10＋3＝13；從 D 去 8＋6＝14。取 13。', '倒回去找路線：F←E←D←B←C←A。'],
+ fig: () => graph(640, 300, {A: [80, 150], B: [240, 60], C: [240, 240], D: [420, 60], E: [420, 240], F: [580, 150]},
+   [['A', 'B', 4, 148, 94], ['A', 'C', 2, 148, 222], ['B', 'C', 1, 256, 156], ['B', 'D', 5, 330, 50], ['C', 'D', 8, 346, 168], ['C', 'E', 10, 330, 266], ['D', 'E', 2, 436, 156], ['D', 'F', 6, 512, 94], ['E', 'F', 3, 512, 222]],
+   {path: ['A', 'C', 'B', 'D', 'E', 'F'], hi: ['A', 'F'], note: {A: ['0 分', 80, 114], B: ['3 分', 240, 24], C: ['2 分', 240, 290], D: ['8 分', 420, 24], E: ['10 分', 420, 290], F: ['13 分', 580, 110]}}),
+ mist: ['走 A→B→D→F（15 分）：選了看起來最直的路。', '走 A→C→B→D→F（14 分）：最後一段沒比較 D→F 和 D→E→F。', '只看每一步最短的路（A 先走 2），結果走 A→C→E→F（15 分）。'],
+ hints: ['到 B 最快要幾分鐘？有沒有比直走更快的路？', '把「最快幾分鐘到」寫在每個村莊旁邊。', '到 F 有兩條路進來，哪一條比較快？'],
+ ext: '如果 B–C 那條路封閉了，最快要幾分鐘？（14 分鐘，A→B→D→E→F）'},
+
+{id: 'C04', title: '上學有幾種走法', concept: '路徑計數', short: '10 種',
+ a: '10 種',
+ steps: ['在每個路口寫「走到這裡有幾種走法」。', '最上面一排、最左邊一行都只有 1 種走法（只能一直往右或一直往下）。', '其他路口只能從上面或左邊來，所以走法＝上面的數＋左邊的數。', '一排一排算下去，學校是 10。'],
+ fig: () => { const xs = [60, 180, 300, 420], ys = [40, 130, 220], v = [[1, 1, 1, 1], [1, 2, 3, 4], [1, 3, 6, 10]]; let s = `<g stroke="var(--line)" stroke-width="6" stroke-linecap="round"><path d="${ys.map(y => `M60 ${y}H420`).join('')}${xs.map(x => `M${x} 40V220`).join('')}"/></g>`; ys.forEach((y, j) => xs.forEach((x, i) => { const end = i === 3 && j === 2; s += `<circle cx="${x}" cy="${y}" r="19" fill="${end ? 'var(--accent)' : 'var(--paper)'}" stroke="var(--accent)" stroke-width="2.5"/><text x="${x}" y="${y + 6}" text-anchor="middle" font-size="17" font-weight="700" fill="${end ? 'var(--paper)' : 'var(--ink)'}">${v[j][i]}</text>`; })); s += `<text x="40" y="18" font-size="14" fill="var(--soft)">家</text><text x="450" y="250" font-size="14" fill="var(--soft)">學校</text><text x="300" y="262" text-anchor="middle" font-size="14" fill="var(--soft)">例：6 ＝ 上面的 3 ＋ 左邊的 3</text>`; return S(480, 270, s, '每個路口的走法數'); },
+ mist: ['只畫幾條明顯的路線，漏算（答 4、6）。', '答 6：用 2 × 3 相乘。'],
+ hints: ['走到家右邊的第一個路口，有幾種走法？', '第二排第二個路口，可以從哪裡來？', '每個路口的走法＝上面的數＋左邊的數。'],
+ ext: '換成 3 × 3 的方格，有幾種走法？（20 種）'},
+
+{id: 'C05', title: '最省木頭的橋', concept: '最小生成樹', short: '12 根',
+ a: '12 根木頭',
+ steps: ['把所有橋依木頭數從少到多排：C–D 2、A–B 3、D–E 3、B–C 4、A–C 5、B–D 6、B–E 8。', '從最便宜的開始挑：C–D、A–B、D–E 都選。', '這時有兩群島：{A、B} 和 {C、D、E}。B–C（4）能把兩群連起來，選它。', '5 座島已經全部連通，2＋3＋3＋4＝12。之後的橋都會「繞一圈」，不需要。'],
+ fig: () => S(650, 290, `<rect x="4" y="4" width="642" height="282" rx="18" fill="var(--pond-tint)"/>
+   ${[[80, 150, 230, 55, 0], [80, 150, 250, 235, 0], [230, 55, 250, 235, 1], [230, 55, 430, 220, 0], [250, 235, 430, 220, 1], [430, 220, 570, 110, 1], [230, 55, 570, 110, 0]].map(([a, b, c, d, on]) => `<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="${on ? 'var(--accent)' : 'var(--wood)'}" stroke-width="${on ? 7 : 3}"${on ? '' : ' stroke-dasharray="8 6" opacity=".55"'}/>`).join('')}
+   <line x1="80" y1="150" x2="230" y2="55" stroke="var(--accent)" stroke-width="7"/>
+   <g font-size="17" font-weight="700" text-anchor="middle" fill="var(--ink)" stroke="var(--pond-tint)" stroke-width="6" paint-order="stroke"><text x="140" y="92">3 ②</text><text x="150" y="214">5</text><text x="262" y="150">4 ④</text><text x="350" y="128">6</text><text x="340" y="256">2 ①</text><text x="520" y="182">3 ③</text><text x="400" y="72">8</text></g>
+   <g stroke="var(--good)" stroke-width="3" fill="var(--good-tint)"><ellipse cx="80" cy="150" rx="32" ry="25"/><ellipse cx="230" cy="55" rx="32" ry="25"/><ellipse cx="250" cy="235" rx="32" ry="25"/><ellipse cx="430" cy="220" rx="32" ry="25"/><ellipse cx="570" cy="110" rx="32" ry="25"/></g>
+   <g font-size="19" font-weight="700" text-anchor="middle" fill="var(--ink)"><text x="80" y="157">A</text><text x="230" y="62">B</text><text x="250" y="242">C</text><text x="430" y="227">D</text><text x="570" y="117">E</text></g>`, '選中的四座橋與挑選順序'),
+ mist: ['多蓋了 A–C（5），答 17：沒檢查 A、C 是不是已經能互通。', '每座島各選自己最便宜的橋，結果島沒有全部連在一起。'],
+ hints: ['最便宜的是哪一座橋？先蓋它。', '下一座橋連接的兩座島，本來就走得到了嗎？', '5 座島最少要幾座橋才能全部連起來？'],
+ ext: '如果 B–C 漲價成 9 根木頭，最少要幾根？（13 根：C–D、A–B、D–E、A–C）'},
+
+/* D */
+{id: 'D01', title: '數字畫圖片', concept: '像素與編碼', short: '1011',
+ a: '1011',
+ steps: ['找到第 3 列，由左到右看：黑、白、黑、黑。', '黑寫 1、白寫 0：1011。'],
+ fig: () => pix(['1111', '1001', '1011', '1111'], {cell: 34, hiRow: 2, side: ['1111', '1001', '1011 ← 第 3 列', '1111']}),
+ mist: ['黑白相反，寫成 0100。', '看成第 3 行（直的）。'],
+ hints: ['第 3 列是從上面數下來第幾排？', '黑的寫什麼數字？白的呢？'],
+ ext: '請學生在 5 × 5 的方格用 0 和 1 畫自己的名字縮寫，再交換解碼。'},
+
+{id: 'D02', title: '重複字縮寫法', concept: '資料壓縮', short: '嗚3嘿2哈4；變長',
+ a: '嗚3嘿2哈4；「河狸」會變長',
+ steps: ['一段一段數連續重複的字：嗚 3 個、嘿 2 個、哈 4 個 → 嗚3嘿2哈4。', '「河狸」沒有重複，要寫成「河1狸1」，從 2 個字變成 4 個字。'],
+ fig: () => tbl(['原本', '縮寫後', '字數'], [['嗚嗚嗚嘿嘿哈哈哈哈', '嗚3嘿2哈4', '9 → 6，變短'], ['河狸', '河1狸1', {t: '2 → 4，變長', c: 'no'}]]),
+ mist: ['寫成「3嗚2嘿4哈」：順序和例題不同。', '以為壓縮一定會變短。'],
+ hints: ['「嗚」連續出現幾次？', '「河狸」寫成縮寫後有幾個字？'],
+ ext: '什麼樣的訊息最適合用這種方法？（同一個字連續出現很多次的，例如全白背景的圖片）'},
+
+{id: 'D03', title: '黑白圖片密碼', concept: '資料壓縮', short: '17 格；樹',
+ a: '17 格，像一棵樹',
+ steps: ['每列從白色開始數：3, 1, 3 → 白 3、黑 1、白 3。', '一列一列塗，黑格依序是 1、3、5、7、1。', '加起來 1＋3＋5＋7＋1＝17，圖案是三角形的樹冠加上樹幹。'],
+ fig: () => pix(['0001000', '0011100', '0111110', '1111111', '0001000'], {cell: 28, side: ['3, 1, 3 → 黑 1', '2, 3, 2 → 黑 3', '1, 5, 1 → 黑 5', '0, 7 → 黑 7', '3, 1, 3 → 黑 1']}),
+ mist: ['從黑色開始數，圖會整個顛倒。', '第 4 列「0, 7」不知道 0 是什麼意思：表示白色 0 格，一開始就是黑。', '數成白格的數量。'],
+ hints: ['第 1 列「3, 1, 3」，先塗幾格白、再幾格黑？', '第 4 列第一個數是 0，代表什麼？', '把五列的黑格數加起來。'],
+ ext: '一列全白要怎麼寫？（7）全黑呢？（0, 7）'},
+
+{id: 'D04', title: '幫圖片寫密碼', concept: '資料壓縮（編碼）', short: '0,1,5,1；0,2,1,1,1,2',
+ a: '第 2 列 0, 1, 5, 1；第 3 列 0, 2, 1, 1, 1, 2',
+ steps: ['規則一定從白色開始數。第 2 列第一格是黑色，所以先寫 0（白色 0 格）。', '第 2 列：白 0、黑 1、白 5、黑 1 → 0, 1, 5, 1。', '第 3 列：白 0、黑 2、白 1、黑 1、白 1、黑 2 → 0, 2, 1, 1, 1, 2。', '檢查：每列的數加起來都要是 7。'],
+ fig: () => pix(['0011100', '1000001', '1101011'], {cell: 30, side: ['2, 3, 2（範例）', '0, 1, 5, 1', '0, 2, 1, 1, 1, 2']}),
+ mist: ['忘了開頭的 0，寫成 1, 5, 1：解碼的人會以為第一格是白色。', '數錯連續的格數；可以用「加起來是不是 7」檢查。'],
+ hints: ['第 2 列的第一格是什麼顏色？規則要從什麼顏色開始數？', '白色一格都沒有時，要寫什麼？', '你寫的數字加起來是 7 嗎？'],
+ ext: '哪一種圖片用這種方法寫最短？哪一種最長？（大片同色最短；黑白交錯最長）'},
+
+{id: 'D05', title: '切四塊的圖片密碼', concept: '資料壓縮（四分法）', short: '9 個字；1 個字',
+ a: '9 個字；全白只要 1 個字',
+ steps: ['整張 4 × 4 有黑有白，寫「分」，切成 4 塊。', '依左上、右上、左下、右下的順序看每一塊（見下圖）。', '左上全黑「黑」；右上全白「白」；左下有黑有白「分」，再寫四小格「黑白黑黑」；右下全白「白」。', '合起來：分 黑 白 分 黑 白 黑 黑 白，共 9 個字。全白的圖整塊同色，只要寫 1 個「白」。'],
+ fig: () => `<div class="figbox">${pix(['1100', '1100', '1000', '1100'], {cell: 36, quad: true})}</div>` + tree(`<li><span class="n">整張：分</span><ul><li><span class="n">左上：黑</span></li><li><span class="n">右上：白</span></li><li><span class="n">左下：分</span><ul><li><span class="n">黑</span> <span class="n">白</span> <span class="n">黑</span> <span class="n">黑</span></li></ul></li><li><span class="n">右下：白</span></li></ul></li>`),
+ mist: ['左下那塊沒有再切，只寫一個字，答 6。', '忘了最開頭的「分」，答 8。', '順序寫錯（不影響字數，但密碼會不對）。'],
+ hints: ['橘色線把圖切成哪 4 塊？每一塊是全黑、全白，還是混合？', '混合的那一塊要怎麼辦？', '別忘了最一開始整張圖也要寫一個字。'],
+ ext: '4 × 4 的圖最多要寫幾個字？（像棋盤一樣黑白交錯：1＋4 × 5＝21 個字）'},
+
+/* E */
+{id: 'E01', title: '誰坐在中間', concept: '邏輯推理（排列）', short: '阿土、小美、大寶',
+ a: '左邊阿土、中間小美、右邊大寶',
+ steps: ['先只用線索①：大寶在小美的右邊隔壁，兩人只能是「小美 中、大寶 右」或「小美 左、大寶 中」。', '剩下的位置給阿土，列出兩種坐法（見下表）。', '線索②：阿土不坐最右邊，刪掉第二種。'],
+ fig: () => tbl(['', '左', '中', '右', '線索②'], [['情況一', '阿土', '小美', '大寶', {t: '✓', c: 'hl'}], ['情況二', '小美', '大寶', '阿土', {t: '✗ 阿土在最右', c: 'no'}]]),
+ mist: ['把「右邊隔壁」看成「左邊」。', '漏了「隔壁」，以為中間可以隔一個人。'],
+ hints: ['只看線索①，小美和大寶可以怎麼坐？', '把每一種可能都列出來。', '用線索②檢查，哪一種不行？'],
+ ext: '如果再多一隻河狸，只給同樣兩條線索，會有幾種坐法？請學生自己出一條線索讓答案只剩一種。'},
+
+{id: 'E02', title: '誰愛吃什麼', concept: '邏輯推理（表格刪去法）', short: '樹皮、蘋果、水草',
+ a: '阿土－樹皮、小美－蘋果、大寶－水草',
+ steps: ['畫表格，把不可能的打 ✗。', '線索①：阿土的蘋果、水草打 ✗，只剩樹皮 → 阿土是樹皮。', '樹皮被選走了，小美、大寶的樹皮打 ✗。', '線索②：小美的水草打 ✗，只剩蘋果。剩下的水草給大寶。'],
+ fig: () => tbl(['', '樹皮', '蘋果', '水草'], [['阿土', {t: '○', c: 'hl'}, '✗', '✗'], ['小美', '✗', {t: '○', c: 'hl'}, '✗'], ['大寶', '✗', '✗', {t: '○', c: 'hl'}]]),
+ mist: ['不知道從哪裡開始，三隻同時猜。', '忘了「每隻喜歡不同的食物」這個條件。'],
+ hints: ['哪一隻河狸只剩下一種可能？', '樹皮被選走後，其他兩隻還能選樹皮嗎？', '用表格打 ✗，不可能的劃掉。'],
+ ext: '請學生改成 4 隻河狸、4 種食物，自己出題給同學解。'},
+
+{id: 'E03', title: '誰打破了花瓶', concept: '邏輯推理（假設法）', short: '大寶',
+ a: '大寶',
+ steps: ['分三種情況假設「是誰打破的」。', '每種情況檢查三句話是真是假，數說真話的人數（見下表）。', '只有「大寶打破」時恰好 1 個人說真話，符合題目。'],
+ fig: () => tbl(['假設是誰打破', '阿土「是小美」', '小美「不是我」', '大寶「不是我」', '說真話人數'], [['阿土', '假', '真', '真', {t: '2 ✗', c: 'no'}], ['小美', '真', '假', '真', {t: '2 ✗', c: 'no'}], ['大寶', '假', '真', '假', {t: '1 ✓', c: 'hl'}]]),
+ mist: ['直接相信阿土的話，答小美。', '忘了「只有一個說真話」，只看誰說的話比較可疑。'],
+ hints: ['先假設是阿土打破的，三個人說的話各是真還是假？', '這時有幾個人說真話？符合題目嗎？', '把三種假設都做成一張表。'],
+ ext: '如果改成「只有一個人說假話」，還能確定是誰嗎？（不能：假設阿土或假設小美，都剛好只有一個人說假話。可以和學生討論「條件不夠時，答案就不只一個」）'},
+
+{id: 'E04', title: '誠實族與說謊族', concept: '邏輯推理（矛盾）', short: '小石說謊族；小水誠實族',
+ a: '小石是說謊族，小水是誠實族',
+ steps: ['假設小石是誠實族 → 他的話是真的 → 他是說謊族。和假設矛盾，所以不可能。', '所以小石是說謊族，他的話是假的。', '「我們兩個都是說謊族」是假的，表示「不是兩個都是說謊族」。', '小石已經是說謊族，所以小水一定是誠實族。'],
+ fig: () => tbl(['假設小石是…', '他的話', '推出來的結果', '成立嗎'], [['誠實族', '是真的', '小石是說謊族（和假設相反）', {t: '✗ 矛盾', c: 'no'}], ['說謊族', '是假的', '不是兩個都說謊 → 小水是誠實族', {t: '✓', c: 'hl'}]]),
+ mist: ['以為小水沒說話，就無法判斷。', '把「不是兩個都是說謊族」誤解成「兩個都是誠實族」。'],
+ hints: ['如果小石是誠實族，他會說「我是說謊族」嗎？', '小石的話是假的，那「兩個都是說謊族」哪裡不對？', '小石已經確定是說謊族了，小水呢？'],
+ ext: '誠實族的人可能說「我是說謊族」嗎？說謊族呢？（兩族都不可能說這句話）'},
+
+{id: 'E05', title: '河狸賽跑', concept: '邏輯推理（排序線索）', short: '第 1 名小花；第 4 名阿土',
+ a: '第 1 名小花，第 4 名阿土',
+ steps: ['大寶第 3 名，剩下 1、2、4、5 名給另外四隻。', '線索①③串起來：小石 比 阿土 快，阿土 比 小美 快。', '小石不是第 1 名。試小石在第 4 名：後面只剩第 5 名，排不下阿土和小美。', '所以小石是第 2 名，阿土、小美依序是第 4、第 5 名。', '剩下的第 1 名，就是線索裡沒提到的小花。'],
+ fig: () => tbl(['名次', '1', '2', '3', '4', '5', ''], [['小石在第 4 名', '?', '?', '大寶', '小石', '阿土', {t: '小美沒位置 ✗', c: 'no'}], ['小石在第 2 名', {t: '小花', c: 'hl'}, '小石', '大寶', {t: '阿土', c: 'hl'}, '小美', {t: '✓', c: 'hl'}]]),
+ mist: ['以為小石不是第 1 名，就是阿土第 1 名。', '沒注意到小花完全沒被提到。'],
+ hints: ['小石、阿土、小美三隻誰最快、誰最慢？', '大寶已經佔掉哪個名次？剩下哪些名次？', '小石可能是第幾名？試試看。'],
+ ext: '請學生改一條線索，讓答案變成小花第 5 名。'},
+
+/* F */
+{id: 'F01', title: '火柴排正方形', concept: '找規律', short: '61 根',
+ a: '61 根',
+ steps: ['第 1 個正方形用 4 根。', '之後每多一個，和前一個共用一根，只要再加 3 根（見下圖藍色）。', '20 個正方形：4＋3 × 19＝61。', '也可以想成：每個正方形 3 根，再加最左邊 1 根：3 × 20＋1＝61。'],
+ fig: () => S(560, 140, `<g stroke-width="7" stroke-linecap="round"><path d="M38 20H112M38 100H112M30 28V92M120 28V92" stroke="var(--accent)"/><path d="M128 20H202M128 100H202M210 28V92" stroke="var(--blue)"/><path d="M218 20H292M218 100H292M300 28V92" stroke="var(--blue)"/><path d="M308 20H382M308 100H382M390 28V92" stroke="var(--blue)"/></g>
+   <g font-size="16" font-weight="700" text-anchor="middle"><text x="75" y="128" fill="var(--accent-ink)">4 根</text><text x="165" y="128" fill="var(--blue)">＋3</text><text x="255" y="128" fill="var(--blue)">＋3</text><text x="345" y="128" fill="var(--blue)">＋3</text></g><text x="470" y="66" text-anchor="middle" font-size="15" fill="var(--soft)">共用左邊那根</text>`, '第一個 4 根，之後每個加 3 根'),
+ mist: ['4 × 20＝80：把共用的邊重複算了。', '4＋3 × 20＝64：多加了一次。'],
+ hints: ['從 1 個變 2 個，多用了幾根？2 個變 3 個呢？', '為什麼不是多 4 根？', '20 個正方形，第一個之後還有幾個？'],
+ ext: '排成上下兩排、每排 10 個（共 20 個），要幾根火柴？（52 根：橫的 3 排 × 10＝30，直的 2 排 × 11＝22）'},
+
+{id: 'F02', title: '河狸串珠子', concept: '找規律（循環）', short: '黃；14 顆',
+ a: '第 30 顆是黃色；藍色 14 顆',
+ steps: ['「紅黃藍藍」4 顆一組。', '30 ÷ 4＝7 組，餘 2。', '第 30 顆是第 8 組的第 2 顆：黃。', '7 組完整的有 7 × 2＝14 顆藍；多出來的第 29、30 顆是紅、黃，沒有藍。'],
+ fig: () => { let s = '', x = 14; const pat = ['red', 'yellow', 'blue', 'blue']; for (let g = 0; g < 8; g++) { const n = g < 7 ? 4 : 2; s += `<rect x="${x - 10}" y="14" width="${n * 17 + 3}" height="30" rx="8" fill="none" stroke="${g < 7 ? 'var(--line)' : 'var(--accent)'}" stroke-width="2"/>`; for (let k = 0; k < n; k++) { s += `<circle cx="${x + k * 17}" cy="29" r="7" fill="var(--${pat[k]})" stroke="var(--ink)" stroke-width="1.2"/>`; } s += `<text x="${x + (n - 1) * 8.5}" y="62" text-anchor="middle" font-size="12" fill="var(--soft)">${g < 7 ? `第${g + 1}組` : '29、30'}</text>`; x += n * 17 + 12; } s += `<path d="M${x - 24} 4 V12" stroke="var(--accent)" stroke-width="2" marker-end="url(#arw-a)"/>`; return S(x + 10, 72, s, '珠子每 4 顆一組'); },
+ mist: ['30 是偶數就答藍。', '藍色答 15：以為一半是藍色。', '答第 30 顆是紅：餘數算成第 1 顆。'],
+ hints: ['幾顆珠子是一組？', '30 顆裡有幾個完整的組？多出幾顆？', '多出來的那幾顆是什麼顏色？'],
+ ext: '第 100 顆是什麼顏色？（100 ÷ 4＝25 組，剛好整除，是一組的最後一顆：藍）'},
+
+{id: 'F03', title: '積木樓梯', concept: '找規律（累加）', short: '55 塊',
+ a: '55 塊',
+ steps: ['第 10 個樓梯有 10 層，由上到下是 1、2、3、……、10 塊。', '1＋2＋3＋…＋10。', '頭尾配對：1＋10、2＋9、3＋8、4＋7、5＋6，共 5 對，每對 11。', '5 × 11＝55。', '圖解：把兩個一樣的樓梯拼起來，剛好是一個長方形，再除以 2。'],
+ fig: () => { const c = 28; let s = ''; for (let r = 0; r < 4; r++) { for (let k = 0; k < r + 1; k++) s += `<rect x="${20 + k * c}" y="${10 + r * c}" width="${c}" height="${c}" fill="var(--wood-tint)" stroke="var(--wood)" stroke-width="2"/>`; for (let k = r + 1; k < 5; k++) s += `<rect x="${20 + k * c}" y="${10 + r * c}" width="${c}" height="${c}" fill="var(--pond-tint)" stroke="var(--pond)" stroke-width="2"/>`; } s += `<text x="190" y="50" font-size="15" fill="var(--ink)">4 層樓梯＋倒過來的一份</text><text x="190" y="76" font-size="15" fill="var(--ink)">＝ 4 × 5 的長方形 ＝ 20 塊</text><text x="190" y="102" font-size="15" font-weight="700" fill="var(--accent-ink)">一個樓梯 ＝ 20 ÷ 2 ＝ 10 塊</text><text x="190" y="128" font-size="14" fill="var(--soft)">10 層：10 × 11 ÷ 2 ＝ 55</text>`; return S(470, 136, s, '兩個樓梯拼成長方形'); },
+ mist: ['10 × 10＝100：以為每層都是 10 塊。', '一塊一塊加，加到一半算錯。'],
+ hints: ['第 10 個樓梯，最上面一層幾塊？最下面一層幾塊？', '1 加到 10，有沒有快一點的加法？', '把 1 和 10 配一對，2 和 9 配一對……'],
+ ext: '第 100 個樓梯要幾塊？（100 × 101 ÷ 2＝5050，就是高斯小時候的故事）'},
+
+{id: 'F04', title: '轉轉箭頭', concept: '找規律（兩種循環）', short: '右、紅',
+ a: '朝右、紅色',
+ steps: ['方向 4 個一循環：上、右、下、左。10 ÷ 4＝2 餘 2 → 和第 2 個一樣：右。', '顏色 3 個一循環：紅、藍、綠。10 ÷ 3＝3 餘 1 → 和第 1 個一樣：紅。', '方向和顏色的循環長度不同，要分開算。'],
+ fig: () => tbl(['第幾個', ...Array.from({length: 12}, (_, i) => i + 1)], [['方向', ...Array.from({length: 12}, (_, i) => i === 9 ? {t: '右', c: 'hl'} : '上右下左'[i % 4])], ['顏色', ...Array.from({length: 12}, (_, i) => i === 9 ? {t: '紅', c: 'hl'} : '紅藍綠'[i % 3])]]),
+ mist: ['只看方向的循環，就說顏色也是第 2 個（藍）。', '餘數 0 時不知道對應哪一個（應該是循環的最後一個）。'],
+ hints: ['方向幾個一循環？顏色幾個一循環？', '分別算第 10 個在各自循環裡的第幾個。', '列一張 1～12 的表看看。'],
+ ext: '第幾個箭頭會第一次和第 1 個完全一樣（方向和顏色都一樣）？（第 13 個，因為 4 和 3 的最小公倍數是 12）'},
+
+{id: 'F05', title: '圍成一圈的河狸', concept: '找規律（反推）', short: '16 隻',
+ a: '每邊 16 隻',
+ steps: ['每邊 n 隻，4 條邊看起來是 4 × n 隻。', '但 4 個角上的河狸同時屬於兩條邊，被算了兩次，要減 4。', '總數＝4 × n − 4。檢查：每邊 4 隻時 16 − 4＝12 ✓。', '4 × n − 4＝60 → 4 × n＝64 → n＝16。'],
+ fig: () => { let s = ''; for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) if (r === 0 || c === 0 || r === 3 || c === 3) { const corner = (r === 0 || r === 3) && (c === 0 || c === 3); s += `<circle cx="${40 + c * 40}" cy="${30 + r * 40}" r="14" fill="${corner ? 'var(--accent)' : 'var(--wood-tint)'}" stroke="var(--ink)" stroke-width="2"/>`; } s += `<text x="230" y="60" font-size="15" fill="var(--ink)">每邊 4 隻，4 條邊 ＝ 16 隻？</text><text x="230" y="90" font-size="15" fill="var(--ink)">橘色的 4 個角各算了兩次</text><text x="230" y="120" font-size="15" font-weight="700" fill="var(--accent-ink)">實際 ＝ 16 − 4 ＝ 12 隻</text>`; return S(500, 170, s, '四個角被重複計算'); },
+ mist: ['60 ÷ 4＝15：沒有考慮角被重複算（15 隻一邊其實只有 56 隻）。', '加 4 而不是減 4，答 14。'],
+ hints: ['每邊 4 隻時，數數看實際有幾隻？為什麼不是 16？', '哪幾隻河狸同時在兩條邊上？', '先寫出「每邊 n 隻共幾隻」的算法，再反推。'],
+ ext: '如果排成實心的正方形，每邊 16 隻共有幾隻？（256 隻）'},
+
+/* G */
+{id: 'G01', title: '小船載木頭', concept: '最佳化（裝箱）', short: '6 和 4 公斤',
+ a: '6 公斤和 4 公斤',
+ steps: ['把可能的組合列出來，算總重（見下表）。', '剛好 10 公斤的只有 6＋4，不可能更重了。'],
+ fig: () => tbl(['組合', '總重', '可以嗎'], [['6＋5', '11', {t: '超重', c: 'no'}], [{t: '6＋4', c: 'hl'}, {t: '10', c: 'hl'}, {t: '剛好 ✓', c: 'hl'}], ['6＋3', '9', '可以，但不是最重'], ['5＋4', '9', '可以，但不是最重'], ['5＋4＋3', '12', {t: '超重', c: 'no'}], ['5＋3', '8', '可以，但不是最重']]),
+ mist: ['先放最重的 6，再放剩下最重又放得下的 3，得到 9：「先拿最大的」不一定最好。', '選了 5＋4＋3（12 公斤），超重。'],
+ hints: ['有沒有剛好 10 公斤的組合？', '把兩根兩根的組合都算一算。', '先放最重的，一定最好嗎？'],
+ ext: '如果船可以載 12 公斤，要選哪些？（5＋4＋3＝12。這時先放 6 公斤反而只能載到 11 公斤）'},
+
+{id: 'G02', title: '最少的硬幣', concept: '貪婪法', short: '5 枚',
+ a: '5 枚',
+ steps: ['先用最大的：37 用一枚 20，剩 17。', '17 用一枚 10，剩 7；用一枚 5，剩 2；用兩枚 1。', '20＋10＋5＋1＋1，共 5 枚。'],
+ mist: ['用了兩枚 10 元再加別的，枚數變多。', '用 7 枚 5 元：沒先用大的。'],
+ hints: ['37 元裡可以先放哪一枚最大的硬幣？', '剩下多少？再放最大的放得下的。'],
+ ext: '請學生把這題和 G03 比較：同樣「先拿最大的」，換了一套硬幣就不一定最少。台灣的硬幣（1、5、10、50）用這個方法都會最少嗎？（會）'},
+
+{id: 'G03', title: '河狸國的硬幣', concept: '貪婪法的限制', short: '2 枚；不能',
+ a: '最少 2 枚，店長的方法不能',
+ steps: ['店長的方法：先拿 4 元，剩 2 元，再拿 1 元、1 元，共 3 枚。', '換個組合：3 元＋3 元＝6 元，只要 2 枚。', '所以「每次先拿最大的」在這套硬幣不一定最少。'],
+ fig: () => S(520, 130, `<text x="10" y="40" font-size="15" fill="var(--ink)">店長：</text>${[4, 1, 1].map((v, i) => `<circle cx="${110 + i * 60}" cy="34" r="${v === 4 ? 24 : 18}" fill="var(--sun)" fill-opacity=".3" stroke="var(--sun)" stroke-width="3"/><text x="${110 + i * 60}" y="41" text-anchor="middle" font-size="18" font-weight="700" fill="var(--ink)">${v}</text>`).join('')}<text x="300" y="40" font-size="15" fill="var(--bad)">3 枚</text>
+   <text x="10" y="104" font-size="15" fill="var(--ink)">更好：</text>${[3, 3].map((v, i) => `<circle cx="${110 + i * 60}" cy="98" r="21" fill="var(--sun)" fill-opacity=".3" stroke="var(--sun)" stroke-width="3"/><text x="${110 + i * 60}" y="105" text-anchor="middle" font-size="18" font-weight="700" fill="var(--ink)">${v}</text>`).join('')}<text x="300" y="104" font-size="15" font-weight="700" fill="var(--good)">2 枚</text>`, '店長 4+1+1 共 3 枚；3+3 只要 2 枚'),
+ mist: ['照店長的方法算出 3 枚，就以為是最少。', '沒想到可以用兩枚一樣的硬幣。'],
+ hints: ['店長會怎麼找 6 元？共幾枚？', '不用 4 元的話，可以怎麼湊 6 元？', '有沒有比店長更少的方法？'],
+ ext: '再找一個店長也會失敗的金額。（10 元：店長 4＋4＋1＋1 共 4 枚，但 4＋3＋3 只要 3 枚）'},
+
+{id: 'G04', title: '排隊裝水', concept: '最佳化（排程）', short: '24 分鐘',
+ a: '24 分鐘',
+ steps: ['排在前面的河狸用多久，後面每一隻都要跟著等。所以花時間少的應該先裝。', '依 1、2、4、6 分鐘的順序：裝完的時間是 1、3、7、13 分鐘。', '加起來 1＋3＋7＋13＝24。', '對照原本的順序（6、2、4、1）：6、8、12、13，加起來 39。'],
+ fig: () => { const u = 22; const row = (y, seq, lab) => { let x = 120, s = `<text x="10" y="${y + 20}" font-size="14" fill="var(--ink)">${lab}</text>`, t = 0, sum = []; const col = {6: 'var(--red)', 2: 'var(--blue)', 4: 'var(--green)', 1: 'var(--yellow)'}; seq.forEach(m => { s += `<rect x="${x}" y="${y}" width="${m * u}" height="28" fill="${col[m]}" fill-opacity=".35" stroke="var(--ink)" stroke-width="1.5"/><text x="${x + m * u / 2}" y="${y + 19}" text-anchor="middle" font-size="13" fill="var(--ink)">${m}分</text>`; x += m * u; t += m; sum.push(t); s += `<text x="${x}" y="${y + 44}" text-anchor="middle" font-size="12" fill="var(--soft)">${t}</text>`; }); return s + `<text x="${x + 14}" y="${y + 20}" font-size="14" font-weight="700" fill="var(--ink)">${sum.join('＋')}＝${sum.reduce((a, b) => a + b)}</text>`; }; return S(660, 130, row(10, [6, 2, 4, 1], '原本順序') + row(72, [1, 2, 4, 6], '短的先裝'), '兩種順序的裝水時間軸'); },
+ mist: ['答 13：只算最後一隻裝完的時間，沒有把每隻的等待時間加起來。', '讓花時間長的先裝。'],
+ hints: ['如果阿土（6 分鐘）排第一，後面三隻各要多等多久？', '誰先裝，大家等的時間加起來會比較少？', '把每一隻「裝完的時間」寫下來再相加。'],
+ ext: '生活中哪裡會用到？（影印機前排隊時，只印一張的先印；超市的「少量結帳」櫃台）'},
+
+{id: 'G05', title: '煎鬆餅', concept: '最佳化（不浪費空位）', short: '3 分鐘',
+ a: '3 分鐘',
+ steps: ['3 片鬆餅共有 6 面要煎，鍋子每分鐘最多煎 2 面，所以最少 3 分鐘。', '關鍵是讓鍋子每分鐘都放滿 2 片（見下表）。', '第 2 分鐘不要急著煎 B 的反面，改放 C 進來。'],
+ fig: () => tbl(['', '鍋子位置 1', '鍋子位置 2'], [['第 1 分鐘', 'A 正面', 'B 正面'], ['第 2 分鐘', 'A 反面', {t: 'C 正面', c: 'hl'}], ['第 3 分鐘', 'B 反面', 'C 反面']]),
+ mist: ['答 4 分鐘：先把 A、B 兩面煎完（2 分鐘），再單獨煎 C（2 分鐘），第 3、4 分鐘鍋子空一個位置。', '以為一片要一次煎完兩面。'],
+ hints: ['3 片鬆餅一共有幾面要煎？', '鍋子每分鐘最多能煎幾面？', '有沒有哪一分鐘鍋子空著一個位置？'],
+ ext: '煎 5 片最少幾分鐘？（5 分鐘：10 面 ÷ 每分鐘 2 面）'},
+
+/* H */
+{id: 'H01', title: '字母往後跳一格', concept: '加密（凱撒密碼）', short: 'CAT',
+ a: 'CAT',
+ steps: ['加密是每個字母往後跳一格，解密就反過來，每個字母往前退一格。', 'D→C、B→A、U→T，得到 CAT。'],
+ fig: () => tbl(['密文', 'D', 'B', 'U'], [['往前退一格', {t: 'C', c: 'hl'}, {t: 'A', c: 'hl'}, {t: 'T', c: 'hl'}]]),
+ mist: ['往後跳：得到 ECV。', '背錯字母順序。'],
+ hints: ['加密時字母往哪個方向跳？解密要往哪個方向？', 'D 的前一個字母是什麼？'],
+ ext: '請學生用「往後跳 3 格」把自己的英文名字加密，交換給同學解。'},
+
+{id: 'H02', title: '補上檢查卡', concept: '錯誤偵測（同位元）', short: '白、黑、白',
+ a: '第 1 列白、第 2 列黑、第 3 列白',
+ steps: ['數每列已有幾張黑卡。', '已經是偶數 → 補白卡；是單數 → 補黑卡，變成偶數。'],
+ fig: () => tbl(['', '前 4 張', '黑卡數', '檢查卡'], [['第 1 列', '黑白黑白', '2（偶數）', {t: '白', c: 'hl'}], ['第 2 列', '黑黑黑白', '3（單數）', {t: '黑', c: 'hl'}], ['第 3 列', '白白白白', '0（偶數）', {t: '白', c: 'hl'}]]),
+ mist: ['第 3 列答黑：以為 0 張不算偶數。', '把要求看成「黑卡和白卡一樣多」。'],
+ hints: ['這一列現在有幾張黑卡？', '是單數還是偶數？要補哪一種顏色才會變偶數？', '0 是偶數嗎？'],
+ ext: '接到資料後重新數一次，如果發現某列變成單數，就知道傳錯了。這就是電腦的「同位元檢查」。'},
+
+{id: 'H03', title: '被翻錯的卡片', concept: '錯誤偵測（同位元）', short: '第 3 列第 2 行',
+ a: '第 3 列、第 2 行',
+ steps: ['每一橫列數一次黑卡：4、2、3、2、2。只有第 3 列是單數。', '每一直行數一次黑卡：2、1、4、2、4。只有第 2 行是單數。', '被翻的卡片同時讓那一列和那一行變成單數，所以就在第 3 列和第 2 行交叉的地方。'],
+ fig: () => { const Gd = [[1, 0, 1, 1, 1], [0, 1, 1, 0, 0], [1, 0, 0, 1, 1], [0, 0, 1, 0, 1], [0, 0, 1, 0, 1]], c = 40; let s = ''; Gd.forEach((r, i) => { r.forEach((v, j) => { s += `<rect x="${20 + j * c}" y="${10 + i * c}" width="${c - 6}" height="${c - 6}" rx="5" fill="${v ? 'var(--px-on)' : 'var(--px-off)'}" stroke="var(--soft)" stroke-width="1.5"/>`; }); const n = r.reduce((a, b) => a + b); s += `<text x="${20 + 5 * c + 12}" y="${10 + i * c + 24}" font-size="16" font-weight="700" fill="${n % 2 ? 'var(--bad)' : 'var(--good)'}">${n}</text>`; }); for (let j = 0; j < 5; j++) { const n = Gd.reduce((a, r) => a + r[j], 0); s += `<text x="${20 + j * c + 17}" y="${10 + 5 * c + 18}" text-anchor="middle" font-size="16" font-weight="700" fill="${n % 2 ? 'var(--bad)' : 'var(--good)'}">${n}</text>`; } s += `<rect x="${20 + c - 4}" y="${10 + 2 * c - 4}" width="${c + 2}" height="${c + 2}" rx="7" fill="none" stroke="var(--sun)" stroke-width="4"/><text x="290" y="70" font-size="15" fill="var(--ink)">右邊：每列黑卡數</text><text x="290" y="96" font-size="15" fill="var(--ink)">下面：每行黑卡數</text><text x="290" y="122" font-size="15" fill="var(--bad)">紅色＝單數</text>`; return S(460, 240, s, '每列每行的黑卡數，紅色是單數'); },
+ mist: ['只數橫列，找到第 3 列後就隨便點一張。', '把「列」和「行」搞反（列是橫的、行是直的）。'],
+ hints: ['每一橫列各有幾張黑卡？哪一列是單數？', '每一直行呢？', '單數的那一列和那一行交叉在哪裡？'],
+ ext: '如果觀眾翻了兩張卡片，這個方法還找得到嗎？（不一定：兩張在同一列時，那一列又變回偶數）'},
+
+{id: 'H04', title: '書號檢查碼', concept: '錯誤偵測（檢查碼）', short: '6318；不能發現',
+ a: '6318 有錯；抄成 3250 不能發現',
+ steps: ['每本書都算前三個數字的和，取個位數，看和最後一個數字一不一樣（見下表）。', '6318：6＋3＋1＝10，個位數是 0，不是 8 → 有錯。', '3250：3＋2＋5＝10，個位數也是 0，和原本一樣 → 檢查碼抓不到「數字對調」的錯。'],
+ fig: () => tbl(['書號', '前三個數字的和', '個位數', '最後一碼', '結果'], [['2350', '2＋3＋5＝10', '0', '0', '✓'], ['4127', '4＋1＋2＝7', '7', '7', '✓'], [{t: '6318', c: 'no'}, '6＋3＋1＝10', '0', '8', {t: '✗', c: 'no'}], ['8109', '8＋1＋0＝9', '9', '9', '✓'], ['3250', '3＋2＋5＝10', '0', '0', {t: '看不出來', c: 'no'}]]),
+ mist: ['把四個數字全部加起來。', '以為檢查碼什麼錯都抓得到。'],
+ hints: ['前三個數字加起來是多少？個位數呢？', '和最後一個數字一樣嗎？', '把兩個數字對調，加起來的和會變嗎？'],
+ ext: '真正的書號（ISBN）把每一位乘上不同的數再加，所以對調的錯誤也抓得到。可以請學生找一本書看看封底的 ISBN。'},
+
+{id: 'H05', title: '鋸齒密碼', concept: '加密（重新排列）', short: '今晚在大樹下見面',
+ a: '今晚在大樹下見面',
+ steps: ['密碼有 8 個字。上排放第 1、3、5、7 個字（4 個），下排放第 2、4、6、8 個字（4 個）。', '所以密碼前 4 個字是上排：今在樹見；後 4 個字是下排：晚大下面。', '把上下兩排排成鋸齒形，再上下輪流讀：今晚在大樹下見面。'],
+ fig: () => { const top = '今在樹見', bot = '晚大下面'; const pts = []; for (let i = 0; i < 8; i++) pts.push([40 + i * 62, i % 2 ? 120 : 40, i % 2 ? bot[(i - 1) / 2] : top[i / 2]]); return S(560, 160, `<polyline points="${pts.map(p => p[0] + ',' + p[1]).join(' ')}" fill="none" stroke="var(--accent)" stroke-width="3" stroke-dasharray="6 5"/>` + pts.map(([x, y, ch], i) => `<circle cx="${x}" cy="${y}" r="22" fill="${i % 2 ? 'var(--pond-tint)' : 'var(--accent-tint)'}" stroke="${i % 2 ? 'var(--pond)' : 'var(--accent)'}" stroke-width="2"/><text x="${x}" y="${y + 8}" text-anchor="middle" font-size="21" font-weight="700" fill="var(--ink)">${ch}</text><text x="${x}" y="${y + (i % 2 ? 36 : -28) + 6}" text-anchor="middle" font-size="11" fill="var(--soft)">${i + 1}</text>`).join(''), '上排今在樹見、下排晚大下面，輪流讀'); },
+ mist: ['照密碼順序直接讀。', '上排放了 5 個字（照範例的 7 個字分法），結果全部錯位。'],
+ hints: ['範例 7 個字時，上排有幾個字？這題 8 個字呢？', '密碼的前半段是上排還是下排？', '把兩排排成鋸齒形，上下輪流讀。'],
+ ext: '如果排成三排呢？請學生用三排鋸齒加密一句話給同學解。'},
+
+/* I */
+{id: 'I01', title: '機器人找點心', concept: '程式（依序執行）', short: '蘋果',
+ a: '蘋果',
+ steps: ['起點在左下角，面向北（上）。', '前進 2 格：往上走 2 格（起點那格不算）。', '右轉：面向東（右）。', '前進 3 格：往右走 3 格，停在蘋果上。'],
+ fig: () => robot(4, 4, [[0, 0], [0, 2], [3, 2]], {items: {'🍎': [3, 2], '🥕': [2, 3], '🐟': [3, 1], '🍃': [1, 0]}}),
+ mist: ['把起點那格也算一格，停在魚上。', '右轉後以為往左走。', '先做「前進 3」再做「前進 2」，停在胡蘿蔔上。'],
+ hints: ['「前進 2 格」之後，機器人在哪一格？', '面向上方時右轉，會面向哪裡？', '用手指在圖上一步一步走。'],
+ ext: '請學生寫一段指令，讓機器人從起點吃到葉子再到胡蘿蔔。'},
+
+{id: 'I02', title: '木頭分類機', concept: '條件判斷（如果……否則……）', short: '左 2、中 1、右 2',
+ a: '左箱 2 根、中箱 1 根、右箱 2 根',
+ steps: ['每根木頭都從第 1 條規則開始檢查，符合了就放進去，不再看下面的規則。', '照下表一根一根判斷。重點是 6 公分、彎的那根：它在第 1 條就符合了，放左箱。'],
+ fig: () => tbl(['木頭', '①比 5 公分長？', '②是彎的？', '放進'], [['7 公分、直', '是', '（不用看）', '左箱'], ['3 公分、彎', '否', '是', '中箱'], [{t: '6 公分、彎', c: 'hl'}, '是', '（不用看）', {t: '左箱', c: 'hl'}], ['2 公分、直', '否', '否', '右箱'], ['4 公分、直', '否', '否', '右箱']]),
+ mist: ['把 6 公分彎的放進中箱，答左 1、中 2、右 2：沒照規則順序檢查。', '把 5 公分當成「比 5 長」。'],
+ hints: ['6 公分、彎的木頭，第 1 條規則符合嗎？', '符合第 1 條之後，還要看第 2 條嗎？', '一根一根做成表格。'],
+ ext: '把規則 ① 和 ② 的順序對調，結果會怎樣？（左 1、中 2、右 2）規則的順序也是程式的一部分。'},
+
+{id: 'I03', title: '爬樓梯的機器人', concept: '迴圈', short: '東 3、北 3、面北',
+ a: '往東 3 格、往北 3 格，面向北',
+ steps: ['先只做一次指令：前進（往北 1）、右轉（面東）、前進（往東 1）、左轉（面北）。', '做完一次，機器人往北 1、往東 1，又面向北，和一開始方向相同。', '每次效果都一樣，重複 3 次就是東 3、北 3，面向北。'],
+ fig: () => robot(6, 6, [[0, 0], [0, 1], [1, 1], [1, 2], [2, 2], [2, 3], [3, 3]], {face: '最後面向北 ↑'}),
+ mist: ['以為重複後方向會一直轉。', '只算前進的總格數（6 格），沒分東和北。'],
+ hints: ['只做「一次」指令後，機器人在哪？面向哪？', '和一開始比，方向有沒有改變？', '那做三次會怎樣？'],
+ ext: '要讓機器人爬「每階兩格高」的樓梯，指令要怎麼改？'},
+
+{id: 'I04', title: '河狸存錢筒', concept: '迴圈與變數', short: '33 元',
+ a: '33 元',
+ steps: ['每做一次：錢變 2 倍，再減 1。', '照下表記下每一次之後的錢。'],
+ fig: () => tbl(['第幾次', '開始時', '變 2 倍', '拿走 1 元'], [['1', '3', '6', '5'], ['2', '5', '10', '9'], ['3', '9', '18', '17'], ['4', '17', '34', {t: '33', c: 'hl'}]]),
+ mist: ['先減 1 再乘 2，答 34 或其他數。', '算成 3 × 2 × 2 × 2 × 2 − 4＝44：把「每次都減 1」一次減掉。'],
+ hints: ['第一次做完，存錢筒有幾元？', '第二次是從幾元開始？', '每一次都要先乘 2 還是先減 1？'],
+ ext: '如果一開始是 1 元呢？（每次都還是 1 元。請學生想想為什麼）'},
+
+{id: 'I05', title: '迴圈裡的迴圈', concept: '巢狀迴圈', short: '東 2、北 0、面西',
+ a: '往東 2 格、往北 0 格，面向西',
+ steps: ['裡面的迴圈「重複 2 次前進 1 格」＝直走 2 格。', '所以外面的迴圈每次就是「直走 2 格，再右轉」。', '第 1 次：往北 2 格，右轉面東。第 2 次：往東 2 格，右轉面南。第 3 次：往南 2 格，右轉面西。', '往北 2、往南 2 抵消，最後在起點東邊 2 格，面向西。'],
+ fig: () => robot(4, 4, [[0, 0], [0, 2], [2, 2], [2, 0]], {face: '最後面向西 ←'}),
+ mist: ['以為右轉也在裡面的迴圈，每走一格就轉一次。', '答北 2：忘了第 3 次往南走回來。', '方向答南：忘了最後還有一次右轉。'],
+ hints: ['裡面的迴圈做完，機器人走了幾格？', '外面的迴圈每做一次，就是「走幾格、再做什麼」？', '在方格紙上畫出三次的路線。'],
+ ext: '把外面改成「重複 4 次」會怎樣？（走出一個 2 × 2 的正方形，回到起點面向北）'},
+
+/* J */
+{id: 'J01', title: '西瓜冠軍賽', concept: '搜尋（找最大值）', short: '7 次',
+ a: '7 次',
+ steps: ['每比一次，就淘汰一顆比較輕的西瓜。', '8 顆要淘汰 7 顆，才會只剩最重的。', '所以不管怎麼安排，都剛好要比 7 次（例如淘汰賽：4＋2＋1＝7）。'],
+ fig: () => { let s = ''; const xs = Array.from({length: 8}, (_, i) => 30 + i * 60); xs.forEach(x => s += `<circle cx="${x}" cy="170" r="14" fill="#4f9a4a" stroke="#2f5f2c" stroke-width="2"/>`); let cur = xs; [[150, 110], [110, 70], [70, 30]].forEach(([y1, y2], k) => { const nxt = []; for (let i = 0; i < cur.length; i += 2) { const m = (cur[i] + cur[i + 1]) / 2; nxt.push(m); s += `<path d="M${cur[i]} ${y1}V${y2}H${cur[i + 1]}V${y1}M${m} ${y2}V${y2 - 10}" fill="none" stroke="var(--accent)" stroke-width="2.5"/>`; } cur = nxt; }); s += `<text x="520" y="134" font-size="14" fill="var(--ink)">第一輪 4 場</text><text x="520" y="94" font-size="14" fill="var(--ink)">第二輪 2 場</text><text x="520" y="54" font-size="14" fill="var(--ink)">決賽 1 場</text><text x="240" y="14" text-anchor="middle" font-size="14" font-weight="700" fill="var(--accent-ink)">最重的西瓜（共比 7 次）</text>`; return S(620, 190, s, '淘汰賽 4+2+1=7 場'); },
+ mist: ['答 3：以為像天平找假幣一樣可以每次刪一半。（每次比較只能淘汰一顆）', '答 8 或 4。'],
+ hints: ['比一次之後，會少掉幾顆西瓜？', '最後要剩下幾顆？要淘汰幾顆？', '畫一張淘汰賽的對戰表。'],
+ ext: '如果要找出最重和第二重的，最少要比幾次？（9 次。提示：第二重的一定輸給過冠軍）'},
+
+{id: 'J02', title: '猜猜我想的數', concept: '二分搜尋', short: '62',
+ a: '62',
+ steps: ['猜 50 太小 → 答案比 50 大；猜 75 太大 → 答案比 75 小。', '答案一定在 51～74 之間，共 24 個數。', '猜正中間（62 或 63），不管太大或太小，都能刪掉一半。', '猜 51 或 74，運氣不好只刪掉 1 個數；99 早就不可能。'],
+ fig: () => S(620, 90, `<rect x="20" y="30" width="580" height="20" rx="4" fill="var(--line)"/><rect x="${20 + 580 * 50 / 100}" y="30" width="${580 * 24 / 100}" height="20" fill="var(--good)"/><line x1="${20 + 580 * 61.5 / 100}" y1="20" x2="${20 + 580 * 61.5 / 100}" y2="60" stroke="var(--accent)" stroke-width="3"/>
+   <g font-size="13" text-anchor="middle" fill="var(--ink)"><text x="20" y="74">1</text><text x="${20 + 580 * .5}" y="74">50</text><text x="${20 + 580 * .75}" y="74">75</text><text x="600" y="74">100</text><text x="${20 + 580 * .615}" y="16" font-weight="700" fill="var(--accent-ink)">62</text></g>
+   <text x="${20 + 580 * .25}" y="45" text-anchor="middle" font-size="13" fill="var(--soft)">太小，刪掉</text><text x="${20 + 580 * .875}" y="45" text-anchor="middle" font-size="13" fill="var(--soft)">太大，刪掉</text>`, '只剩 51 到 74，猜中間 62'),
+ mist: ['猜 74 或 51：想「靠近邊邊比較可能」。', '忘了 50 和 75 本身也已經被排除。'],
+ hints: ['猜 50 太小，代表什麼數不可能了？', '現在答案可能在哪個範圍？', '猜哪個數，不管結果如何都能刪掉最多？'],
+ ext: '和 J04 一起做：從 1～100 開始，用這個方法最多要猜幾次？（7 次）'},
+
+{id: 'J03', title: '交換排身高', concept: '排序（相鄰交換）', short: '5 次',
+ a: '5 次',
+ steps: ['找出所有「高的站在矮的左邊」的配對：(4,2)、(4,3)、(4,1)、(2,1)、(3,1)，共 5 對。', '每次交換相鄰的兩隻，剛好修好 1 對，所以最少要 5 次。', '實際做一次（橘色是這次交換的兩隻）：'],
+ fig: () => [['4', '2', '3', '1'], ['2', '4', '3', '1'], ['2', '3', '4', '1'], ['2', '3', '1', '4'], ['2', '1', '3', '4'], ['1', '2', '3', '4']].map((r, i, a) => { const sw = []; if (i > 0) r.forEach((v, j) => { if (v !== a[i - 1][j]) sw.push(j); }); return `<div class="chips"><i>${i === 0 ? '開始' : `第 ${i} 次`}</i>${r.map((v, j) => `<span class="${sw.includes(j) ? 'sw' : ''}">${v}</span>`).join('')}</div>`; }).join(''),
+ mist: ['答 2 或 3：以為可以跳著交換（例如直接交換 4 和 1）。', '一邊換一邊數，數漏了。'],
+ hints: ['可以直接交換 4 號和 1 號嗎？', '4 號要走到最右邊，要換幾次？', '數數看有幾對「高的在矮的左邊」。'],
+ ext: '如果可以交換任意兩隻（不用相鄰），最少要幾次？（1 次：直接交換 4 號和 1 號，就變成 1、2、3、4。規則不同，最少次數也不同）'},
+
+{id: 'J04', title: '最多猜幾次', concept: '二分搜尋（次數）', short: '5 次',
+ a: '5 次',
+ steps: ['每次都猜剩下範圍的正中間，運氣最差時的情況見下表。', '31 → 15 → 7 → 3 → 1，第 5 次一定猜中。', '反過來看：猜 1 次能處理 1 個數，2 次 3 個，3 次 7 個，4 次 15 個，5 次 31 個。'],
+ fig: () => tbl(['第幾次猜', '猜的數（例）', '猜錯後最多剩下'], [['1', '16', '15 個（1～15 或 17～31）'], ['2', '8', '7 個'], ['3', '4', '3 個'], ['4', '2', '1 個'], ['5', '剩下的那個', {t: '一定猜中', c: 'hl'}]]),
+ mist: ['答 31：一個一個猜。', '答 4：以為 2 × 2 × 2 × 2＝16 就夠（猜中的那一次也要算）。'],
+ hints: ['第一次猜哪個數最聰明？', '猜錯後，最多還剩幾個數？', '一直這樣下去，什麼時候只剩 1 個？'],
+ ext: '1～100 最多要猜幾次？（7 次，因為 6 次只能處理到 63 個數）'},
+
+{id: 'J05', title: '天平找假金幣', concept: '分而治之', short: '2 次',
+ a: '2 次',
+ steps: ['天平一次有三種結果：左重、右重、一樣重。所以把金幣分成三組。', '分成 3、3、2。第一次把兩組 3 枚放上去比（見下圖）。', '第二次從「可疑的那組」裡拿 1 對 1 比，就能找出假幣。', '1 次不夠：天平只有 3 種結果，最多只能從 3 枚裡分辨，8 枚不行。'],
+ fig: () => tree(`<li><span class="n">第 1 次：3 枚 對 3 枚</span><ul>
+   <li><span class="n">左邊重 → 假幣在左邊 3 枚</span><ul><li><span class="n ok">第 2 次：拿其中 1 對 1，重的就是；一樣重就是沒放上去的那枚</span></li></ul></li>
+   <li><span class="n">右邊重 → 假幣在右邊 3 枚</span><ul><li><span class="n ok">第 2 次：同上</span></li></ul></li>
+   <li><span class="n">一樣重 → 假幣在剩下 2 枚</span><ul><li><span class="n ok">第 2 次：1 對 1，重的就是</span></li></ul></li></ul></li>`),
+ mist: ['答 3：用「分兩半」的方法（4 對 4、2 對 2、1 對 1）。', '以為一樣重時就找不到。'],
+ hints: ['天平秤一次，有幾種可能的結果？', '如果只有 3 枚，秤一次找得到嗎？', '8 枚可以怎麼分成三組？'],
+ ext: '秤 3 次最多能從幾枚金幣裡找出比較重的假幣？（27 枚，每秤一次範圍變成三分之一）'}
+];
+
+/* ---------- 渲染 ---------- */
+const letters = Object.keys(CATS);
+document.getElementById('nav').innerHTML = `<a href="#guide">使用說明</a><a href="#index">答案索引</a>` + letters.map(l => `<a href="#cat-${l}">${l} ${CATS[l]}</a>`).join('');
+
+const idx = document.getElementById('idx');
+idx.innerHTML = `<tr><th>題號</th><th class="l">題目</th><th>難度</th><th class="l">答案</th></tr>` + G.map(q => `<tr><td><a href="#${q.id}">${q.id}</a></td><td class="l">${q.title}</td><td class="stars">${STAR(LV(q.id))}</td><td class="l">${q.short}</td></tr>`).join('');
+
+document.getElementById('cards').innerHTML = letters.map(l => `<h2 class="sec" id="cat-${l}">${l}　${CATS[l]}</h2>` + G.filter(q => q.id[0] === l).map(q => `
+  <article class="qcard" id="${q.id}">
+    <div class="q-title"><span class="code">${q.id}</span><h3>${q.title}</h3><span class="stars" aria-label="難度 ${LV(q.id)} 顆星">${STAR(LV(q.id))}</span></div>
+    <p class="meta">概念：${q.concept}</p>
+    <div class="ans">答案：${q.a}</div>
+    <div class="part">解題步驟</div>
+    <ol>${q.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+    ${q.fig ? `<div class="part">圖解</div><div class="figbox">${q.fig()}</div>${q.fig2 ? `<div class="figbox">${q.fig2()}</div>` : ''}` : ''}
+    <div class="part">常見錯誤</div>
+    <ul class="mist">${q.mist.map(s => `<li>${s}</li>`).join('')}</ul>
+    <div class="part">學生卡住時可以這樣問</div>
+    <ul class="hints">${q.hints.map((s, i) => `<li><span>第 ${i + 1} 層</span>${s}</li>`).join('')}</ul>
+    <p class="ext"><b>延伸討論：</b>${q.ext}</p>
+  </article>`).join('')).join('');
+</script>
+
+</body></html>
